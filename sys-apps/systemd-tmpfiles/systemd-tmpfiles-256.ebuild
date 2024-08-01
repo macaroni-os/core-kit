@@ -138,6 +138,7 @@ src_configure() {
 		-Dportabled=false
 		-Dprefer_static=false
 		-Dpstore=false
+		-Dpython.allow_limited_api=false
 		-Dquotacheck=false
 		-Drandomseed=false
 		-Dresolve=false

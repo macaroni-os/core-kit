@@ -2,8 +2,8 @@
 
 EAPI=7
 
-DESCRIPTION="Macaroni OS Anise System Users/Groups Manager"
-HOMEPAGE="https://github.com/geaaru/entities"
+DESCRIPTION="Macaroni OS Knife"
+HOMEPAGE="https://github.com/macaroni-os/macaronictl"
 SRC_URI="{{ src_uri }}"
 
 LICENSE="GPL-3"
@@ -13,14 +13,13 @@ KEYWORDS="*"
 DEPEND="dev-lang/go"
 
 post_src_unpack() {
-	mv geaaru-${PN}-* ${S}
+	mv macaroni-os-${PN}-* ${S}
 }
 
 src_compile() {
 	golang_ldflags=(
-		"-X \"github.com/geaaru/entities/pkg/converter.BuildTime=$(date -u '+%Y-%m-%d %I:%M:%S %Z')\""
-		"-X github.com/geaaru/entities/pkg/converter.BuildCommit={{ sha }}"
-		"-X github.com/geaaru/entities/pkg/config.BuildGoVersion=$(go env GOVERSION)"
+		"-X \"github.com/macaroni-os/macaronictl/pkg/converter.BuildTime=$(date -u '+%Y-%m-%d %I:%M:%S %Z')\""
+		"-X github.com/macaroni-os/macaronictl/pkg/converter.BuildCommit={{ sha }}"
 	)
 
 	CGO_ENABLED=0 go build \

@@ -12,7 +12,7 @@ VERSION_BCACHE_TOOLS="1.0.8_p20141204"
 VERSION_BOOST="1.79.0"
 VERSION_BTRFS_PROGS="6.3.2"
 VERSION_BUSYBOX="1.36.1"
-VERSION_COREUTILS="9.3"
+VERSION_COREUTILS="9.4"
 VERSION_CRYPTSETUP="2.6.1"
 VERSION_DMRAID="1.0.0.rc16-3"
 VERSION_DROPBEAR="2022.83"
@@ -50,7 +50,7 @@ https://github.com/g2p/bcache-tools/archive/399021549984ad27bf4a13ae85e458833fe0
 https://boostorg.jfrog.io/artifactory/main/release/1.79.0/source/boost_1_79_0.tar.bz2 -> boost_1_79_0.tar.bz2
 https://www.kernel.org/pub/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v6.3.2.tar.xz -> btrfs-progs-v6.3.2.tar.xz
 https://www.busybox.net/downloads/busybox-1.36.1.tar.bz2 -> busybox-1.36.1.tar.bz2
-https://ftpmirror.gnu.org/coreutils/coreutils-9.3.tar.xz -> coreutils-9.3.tar.xz
+https://ftpmirror.gnu.org/coreutils/coreutils-9.4.tar.xz -> coreutils-9.4.tar.xz
 https://www.kernel.org/pub/linux/utils/cryptsetup/v2.6/cryptsetup-2.6.1.tar.xz -> cryptsetup-2.6.1.tar.xz
 https://deb.debian.org/debian/pool/main/d/dmraid/dmraid_1.0.0.rc16.orig.tar.gz -> dmraid-1.0.0.rc16-3.tar.gz
 https://matt.ucc.asn.au/dropbear/releases/dropbear-2022.83.tar.bz2 -> dropbear-2022.83.tar.bz2
@@ -116,8 +116,8 @@ RDEPEND="${PYTHON_DEPS}
 	elibc_glibc? ( sys-libs/glibc[static-libs(+)] )
 	firmware? ( sys-kernel/linux-firmware )"
 BDEPEND="app-text/asciidoc"
-
 PATCHES=(
+	"${FILESDIR}"/"${PN}-4.3.10-fix-modinfo-error.patch"
 )
 
 S="${WORKDIR}"/gentoo-genkernel-d6a77d9

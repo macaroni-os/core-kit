@@ -70,7 +70,7 @@ EGO_SUM=(
 go-module_set_globals
 
 SRC_URI="https://github.com/junegunn/fzf/tarball/24df8bab282e570be4905676c24b59e75ad383bc -> fzf-0.54.3-24df8ba.tar.gz
-https://distfiles.macaronios.org/dc/93/01/dc9301dd71d2789d7b0b29448d0da5d5d9f83925486a70a14b75f5307516c9346534773aca8667d0933d658ae0bc9580edaa7f710ac55315c44226b189597a59 -> fzf-0.54.3-funtoo-go-bundle-105ff9b38872482c0e34a75ec6522d747c121489763a3fc8de66fe040f046a891bd2f92a2372d3ee694cf98664c286c1782213092fcaf5456dd3e17c60ae34b9.tar.gz"
+https://distfiles.macaronios.org/55/7b/97/557b974f64234db388d6f1a4a56a71ed9da168bbb374c59c47c3198ca57bc024ac261234df1d4793cb06559abf77df880af9a8560e628a2aa4f0757864c5becb -> fzf-0.54.3-funtoo-go-bundle-105ff9b38872482c0e34a75ec6522d747c121489763a3fc8de66fe040f046a891bd2f92a2372d3ee694cf98664c286c1782213092fcaf5456dd3e17c60ae34b9.tar.gz"
 
 LICENSE="MIT BSD-with-disclosure"
 SLOT="0"

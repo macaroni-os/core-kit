@@ -1,28 +1,13 @@
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=7
 
-inherit eutils db flag-o-matic java-pkg-opt-2 autotools multilib multilib-minimal
+inherit eutils db flag-o-matic java-pkg-opt-2 autotools multilib multilib-minimal toolchain-funcs
 
-#Number of official patches
-#PATCHNO=`echo ${PV}|sed -e "s,\(.*_p\)\([0-9]*\),\2,"`
-PATCHNO=${PV/*.*.*_p}
-if [[ ${PATCHNO} == "${PV}" ]] ; then
-	MY_PV=${PV}
-	MY_P=${P}
-	PATCHNO=0
-else
-	MY_PV=${PV/_p${PATCHNO}}
-	MY_P=${PN}-${MY_PV}
-fi
-
-S="${WORKDIR}/${MY_P}/build_unix"
+S="${WORKDIR}/${P}/build_unix"
 DESCRIPTION="Oracle Berkeley DB"
-HOMEPAGE="http://www.oracle.com/technology/software/products/berkeley-db/index.html"
-SRC_URI="http://download.oracle.com/berkeley-db/${MY_P}.tar.gz"
-for (( i=1 ; i<=${PATCHNO} ; i++ )) ; do
-	export SRC_URI="${SRC_URI} http://www.oracle.com/technology/products/berkeley-db/db/update/${MY_PV}/patch.${MY_PV}.${i}"
-done
+HOMEPAGE="http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/overview/index.html"
+SRC_URI="http://download.oracle.com/berkeley-db/${P}.tar.gz"
 
 LICENSE="Sleepycat"
 SLOT="4.8"
@@ -32,42 +17,35 @@ IUSE="doc java cxx tcl test"
 REQUIRED_USE="test? ( tcl )"
 
 # the entire testsuite needs the TCL functionality
-DEPEND="tcl? ( >=dev-lang/tcl-8.5.15-r1[${MULTILIB_USEDEP}] )
-	test? ( >=dev-lang/tcl-8.5.15-r1[${MULTILIB_USEDEP}] )
+DEPEND="tcl? ( >=dev-lang/tcl-8.5.15-r1:0=[${MULTILIB_USEDEP}] )
+	test? ( >=dev-lang/tcl-8.5.15-r1:0=[${MULTILIB_USEDEP}] )
 	java? ( >=virtual/jdk-1.5 )
 	>=sys-devel/binutils-2.16.1"
-RDEPEND="tcl? ( >=dev-lang/tcl-8.5.15-r1[${MULTILIB_USEDEP}] )
-	java? ( >=virtual/jre-1.5 )
-	abi_x86_32? (
-		!<=app-emulation/emul-linux-x86-baselibs-20140508-r2
-		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
-	)"
+RDEPEND="tcl? ( >=dev-lang/tcl-8.5.15-r1:0=[${MULTILIB_USEDEP}] )
+	java? ( >=virtual/jre-1.5 )"
 
 src_prepare() {
-	cd "${WORKDIR}"/"${MY_P}" || die
-	for (( i=1 ; i<=${PATCHNO} ; i++ ))
-	do
-		epatch "${DISTDIR}"/patch."${MY_PV}"."${i}"
-	done
-	epatch "${FILESDIR}"/${PN}-4.8-libtool.patch
-	epatch "${FILESDIR}"/${PN}-4.8.24-java-manifest-location.patch
-	epatch "${FILESDIR}"/${PN}-4.8.30-rename-atomic-compare-exchange.patch
+	default
+	cd "${S}"/.. || die
+	eapply -p0 "${FILESDIR}"/${PN}-4.8-libtool.patch
+	eapply "${FILESDIR}"/${PN}-4.8.24-java-manifest-location.patch
+	eapply "${FILESDIR}"/${PN}-4.8.30-rename-atomic-compare-exchange.patch
 
 	# use the includes from the prefix
-	epatch "${FILESDIR}"/${PN}-4.6-jni-check-prefix-first.patch
-	epatch "${FILESDIR}"/${PN}-4.3-listen-to-java-options.patch
+	eapply -p0 "${FILESDIR}"/${PN}-4.6-jni-check-prefix-first.patch
+	eapply "${FILESDIR}"/${PN}-4.3-listen-to-java-options.patch
 
 	sed -e "/^DB_RELEASE_DATE=/s/%B %e, %Y/%Y-%m-%d/" -i dist/RELEASE \
 		|| die
+	
+	cd "${S}"/../dist || die
 
 	# Include the SLOT for Java JAR files
 	# This supersedes the unused jarlocation patches.
 	sed -r -i \
 		-e '/jarfile=.*\.jar$/s,(.jar$),-$(LIBVERSION)\1,g' \
-		"${S}"/../dist/Makefile.in || die
-
-	cd "${S}"/../dist || die
-	rm -f aclocal/libtool.m4
+		Makefile.in || die
+	rm -f aclocal/libtool.m4 || die
 	sed -i \
 		-e '/AC_PROG_LIBTOOL$/aLT_OUTPUT' \
 		configure.ac || die
@@ -86,24 +64,22 @@ src_prepare() {
 		-e "s/__EDIT_DB_VERSION__/$DB_VERSION/g" configure || die
 }
 
-src_configure() {
-	# Add linker versions to the symbols. Easier to do, and safer than header file
-	# mumbo jumbo.
-	if use userland_GNU ; then
-		append-ldflags -Wl,--default-symver
-	fi
-
-	multilib-minimal_src_configure
-}
-
 multilib_src_configure() {
 	local myconf=()
+
+	tc-ld-disable-gold #470634
 
 	# compilation with -O0 fails on amd64, see bug #171231
 	if [[ ${ABI} == amd64 ]]; then
 		local CFLAGS=${CFLAGS} CXXFLAGS=${CXXFLAGS}
 		replace-flags -O0 -O2
 		is-flagq -O[s123] || append-flags -O2
+	fi
+
+	# Add linker versions to the symbols. Easier to do, and safer than header file
+	# mumbo jumbo.
+	if use userland_GNU ; then
+		append-ldflags -Wl,--default-symver
 	fi
 
 	# use `set` here since the java opts will contain whitespace
@@ -118,7 +94,7 @@ multilib_src_configure() {
 	if use tcl || use test ; then
 		myconf+=(
 			--enable-tcl
-			--with-tcl=/usr/$(get_libdir)
+			--with-tcl="${EPREFIX}/usr/$(get_libdir)"
 		)
 	else
 		myconf+=(--disable-tcl )
@@ -130,13 +106,19 @@ multilib_src_configure() {
 		--enable-compat185 \
 		--enable-o_direct \
 		--without-uniquename \
-		$([[ ${ABI} == arm ]] && echo --with-mutex=ARM/gcc-assembly) \
 		$([[ ${ABI} == amd64 ]] && echo --with-mutex=x86/gcc-assembly) \
 		$(use_enable cxx) \
 		$(use_enable cxx stl) \
 		$(multilib_native_use_enable java) \
 		"${myconf[@]}" \
 		$(use_enable test)
+	# The embedded assembly on ARM does not work on newer hardware
+	# so you CANNOT use --with-mutex=ARM/gcc-assembly anymore.
+	# Specifically, it uses the SWPB op, which was deprecated:
+	# http://www.keil.com/support/man/docs/armasm/armasm_dom1361289909499.htm
+	# The op ALSO cannot be used in ARM-Thumb mode.
+	# Trust the compiler instead.
+	# >=db-6.1 uses LDREX instead.
 }
 
 multilib_src_test() {
@@ -153,9 +135,9 @@ multilib_src_install() {
 	db_src_install_usrlibcleanup
 
 	if multilib_is_native_abi && use java; then
-		java-pkg_regso "${D}"/usr/"$(get_libdir)"/libdb_java*.so
-		java-pkg_dojar "${D}"/usr/"$(get_libdir)"/*.jar
-		rm -f "${D}"/usr/"$(get_libdir)"/*.jar
+		java-pkg_regso "${ED}"/usr/"$(get_libdir)"/libdb_java*.so
+		java-pkg_dojar "${ED}"/usr/"$(get_libdir)"/*.jar
+		rm -f "${ED}"/usr/"$(get_libdir)"/*.jar
 	fi
 }
 
@@ -166,9 +148,9 @@ multilib_src_install_all() {
 
 	dodir /usr/sbin
 	# This file is not always built, and no longer exists as of db-4.8
-	if [[ -f "${D}"/usr/bin/berkeley_db_svc ]] ; then
-		mv "${D}"/usr/bin/berkeley_db_svc \
-			"${D}"/usr/sbin/berkeley_db"${SLOT/./}"_svc || die
+	if [[ -f "${ED}"/usr/bin/berkeley_db_svc ]] ; then
+		mv "${ED}"/usr/bin/berkeley_db_svc \
+			"${ED}"/usr/sbin/berkeley_db"${SLOT/./}"_svc || die
 	fi
 }
 

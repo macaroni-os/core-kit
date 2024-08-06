@@ -1,9 +1,10 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: epatch.eclass
 # @MAINTAINER:
 # base-system@gentoo.org
+# @SUPPORTED_EAPIS: 0 1 2 3 4 5 6
 # @BLURB: easy patch application functions
 # @DESCRIPTION:
 # An eclass providing epatch and epatch_user functions to easily apply
@@ -11,7 +12,12 @@
 
 if [[ -z ${_EPATCH_ECLASS} ]]; then
 
-inherit estack
+case ${EAPI:-0} in
+	0|1|2|3|4|5|6)
+		;;
+	*)
+		die "${ECLASS}: banned in EAPI=${EAPI}; use eapply* instead";;
+esac
 
 # @VARIABLE: EPATCH_SOURCE
 # @DESCRIPTION:
@@ -203,13 +209,14 @@ epatch() {
 		# Let people filter things dynamically
 		if [[ -n ${EPATCH_EXCLUDE}${EPATCH_USER_EXCLUDE} ]] ; then
 			# let people use globs in the exclude
-			eshopts_push -o noglob
+			local prev_noglob=$(shopt -p -o noglob)
+			set -o noglob
 
 			local ex
 			for ex in ${EPATCH_EXCLUDE} ; do
 				if [[ ${patchname} == ${ex} ]] ; then
 					einfo "  Skipping ${patchname} due to EPATCH_EXCLUDE ..."
-					eshopts_pop
+					${prev_noglob}
 					continue 2
 				fi
 			done
@@ -217,12 +224,12 @@ epatch() {
 			for ex in ${EPATCH_USER_EXCLUDE} ; do
 				if [[ ${patchname} == ${ex} ]] ; then
 					einfo "  Skipping ${patchname} due to EPATCH_USER_EXCLUDE ..."
-					eshopts_pop
+					${prev_noglob}
 					continue 2
 				fi
 			done
 
-			eshopts_pop
+			${prev_noglob}
 		fi
 
 		if [[ ${SINGLE_PATCH} == "yes" ]] ; then
@@ -276,13 +283,13 @@ epatch() {
 		# people could (accidently) patch files in the root filesystem.
 		# Or trigger other unpleasantries #237667.  So disallow -p0 on
 		# such patches.
-		local abs_paths=$(egrep -n '^[-+]{3} /' "${PATCH_TARGET}" | awk '$2 != "/dev/null" { print }')
+		local abs_paths=$(grep -E -n '^[-+]{3} /' "${PATCH_TARGET}" | awk '$2 != "/dev/null" { print }')
 		if [[ -n ${abs_paths} ]] ; then
 			count=1
 			printf "NOTE: skipping -p0 due to absolute paths in patch:\n%s\n" "${abs_paths}" >> "${STDERR_TARGET}"
 		fi
 		# Similar reason, but with relative paths.
-		local rel_paths=$(egrep -n '^[-+]{3} [^	]*[.][.]/' "${PATCH_TARGET}")
+		local rel_paths=$(grep -E -n '^[-+]{3} [^	]*[.][.]/' "${PATCH_TARGET}")
 		if [[ -n ${rel_paths} ]] ; then
 			echo
 			eerror "Rejected Patch: ${patchname} !"

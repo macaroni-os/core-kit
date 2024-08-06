@@ -1,15 +1,15 @@
-# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: apache-2.eclass
 # @MAINTAINER:
 # polynomial-c@gentoo.org
+# @SUPPORTED_EAPIS: 5 6 7
 # @BLURB: Provides a common set of functions for apache-2.x ebuilds
 # @DESCRIPTION:
 # This eclass handles apache-2.x ebuild functions such as LoadModule generation
 # and inter-module dependency checking.
 
-inherit autotools eutils flag-o-matic multilib ssl-cert user toolchain-funcs versionator
+inherit autotools flag-o-matic multilib ssl-cert user toolchain-funcs
 
 [[ ${CATEGORY}/${PN} != www-servers/apache ]] \
 	&& die "Do not use this eclass with anything else than www-servers/apache ebuilds!"
@@ -21,59 +21,31 @@ case ${EAPI:-0} in
 esac
 
 # settings which are version specific go in here:
-case $(get_version_component_range 1-2) in
+case $(ver_cut 1-2) in
 	2.4)
 		DEFAULT_MPM_THREADED="event" #509922
-		RDEPEND=">=dev-libs/apr-1.5.1
+		CDEPEND=">=dev-libs/apr-1.5.1:=
 			!www-apache/mod_macro" #492578 #477702
 	;;
 	2.2)
 		DEFAULT_MPM_THREADED="worker"
-		RDEPEND=">=dev-libs/apr-1.4.5" #368651
+		CDEPEND=">=dev-libs/apr-1.4.5:=" #368651
 	;;
 	*)
 		die "Unknown MAJOR.MINOR apache version."
 	;;
 esac
 
+# @VARIABLE: APACHE_LAYOUT
+# @DESCRIPTION:
+# This variable set the name of the config layout to use.
+APACHE_LAYOUT=${APACHE_LAYOUT:-Funtoo}
+
 # ==============================================================================
 # INTERNAL VARIABLES
 # ==============================================================================
 
-# @ECLASS-VARIABLE: GENTOO_PATCHNAME
-# @DESCRIPTION:
-# This internal variable contains the prefix for the patch tarball.
-# Defaults to the full name and version (including revision) of the package.
-# If you want to override this in an ebuild, use:
-# ORIG_PR="(revision of Gentoo stuff you want)"
-# GENTOO_PATCHNAME="gentoo-${PN}-${PV}${ORIG_PR:+-${ORIG_PR}}"
-[[ -n "$GENTOO_PATCHNAME" ]] || GENTOO_PATCHNAME="gentoo-${PF}"
-
-# @ECLASS-VARIABLE: GENTOO_PATCHDIR
-# @DESCRIPTION:
-# This internal variable contains the working directory where patches and config
-# files are located.
-# Defaults to the patchset name appended to the working directory.
-[[ -n "$GENTOO_PATCHDIR" ]] || GENTOO_PATCHDIR="${WORKDIR}/${GENTOO_PATCHNAME}"
-
-# @VARIABLE: GENTOO_DEVELOPER
-# @DESCRIPTION:
-# This variable needs to be set in the ebuild and contains the name of the
-# gentoo developer who created the patch tarball
-
-# @VARIABLE: GENTOO_PATCHSTAMP
-# @DESCRIPTION:
-# This variable needs to be set in the ebuild and contains the date the patch
-# tarball was created at in YYYYMMDD format
-
-# @VARIABLE: GENTOO_PATCH_A
-# @DESCRIPTION:
-# This variable should contain the entire filename of patch tarball.
-# Defaults to the name of the patchset, with a datestamp.
-[[ -n "$GENTOO_PATCH_A" ]] || GENTOO_PATCH_A="${GENTOO_PATCHNAME}-${GENTOO_PATCHSTAMP}.tar.bz2"
-
-SRC_URI="mirror://apache/httpd/httpd-${PV}.tar.bz2
-	https://dev.gentoo.org/~${GENTOO_DEVELOPER}/dist/apache/${GENTOO_PATCH_A}"
+SRC_URI="mirror://apache/httpd/httpd-${PV}.tar.bz2"
 
 # @VARIABLE: IUSE_MPMS_FORK
 # @DESCRIPTION:
@@ -91,26 +63,52 @@ SRC_URI="mirror://apache/httpd/httpd-${PV}.tar.bz2
 # built-in modules
 
 IUSE_MPMS="${IUSE_MPMS_FORK} ${IUSE_MPMS_THREAD}"
-IUSE="${IUSE} debug doc ldap libressl selinux ssl static suexec threads"
+IUSE="${IUSE} debug doc gdbm ldap libressl selinux ssl static suexec threads"
 
 for module in ${IUSE_MODULES} ; do
 	IUSE="${IUSE} apache2_modules_${module}"
 done
 
-for mpm in ${IUSE_MPMS} ; do
-	IUSE="${IUSE} apache2_mpms_${mpm}"
-done
+_apache2_set_mpms() {
+	local mpm
+	local ompm
 
-DEPEND="dev-lang/perl
-	=dev-libs/apr-1*
-	=dev-libs/apr-util-1*[ldap?]
+	for mpm in ${IUSE_MPMS} ; do
+		IUSE="${IUSE} apache2_mpms_${mpm}"
+
+		REQUIRED_USE+=" apache2_mpms_${mpm}? ("
+		for ompm in ${IUSE_MPMS} ; do
+			if [[ "${mpm}" != "${ompm}" ]] ; then
+				REQUIRED_USE+=" !apache2_mpms_${ompm}"
+			fi
+		done
+
+		if has ${mpm} ${IUSE_MPMS_FORK} ; then
+			REQUIRED_USE+=" !threads"
+		else
+			REQUIRED_USE+=" threads"
+		fi
+		REQUIRED_USE+=" )"
+	done
+
+	if [[ "$(ver_cut 1-2)" != 2.2 ]] ; then
+		REQUIRED_USE+=" apache2_mpms_prefork? ( !apache2_modules_http2 )"
+	fi
+}
+_apache2_set_mpms
+unset -f _apache2_set_mpms
+
+DEPEND="${CDEPEND}
+	dev-lang/perl
+	=dev-libs/apr-util-1*:=[gdbm=,ldap?]
 	dev-libs/libpcre
 	apache2_modules_deflate? ( sys-libs/zlib )
 	apache2_modules_mime? ( app-misc/mime-types )
+	gdbm? ( sys-libs/gdbm:= )
 	ldap? ( =net-nds/openldap-2* )
 	ssl? (
 		!libressl? ( >=dev-libs/openssl-1.0.2:0= )
-		libressl? ( dev-libs/libressl:= )
+		libressl? ( dev-libs/libressl:0= )
 	)
 	!=www-servers/apache-1*"
 RDEPEND+=" ${DEPEND}
@@ -118,6 +116,23 @@ RDEPEND+=" ${DEPEND}
 PDEPEND="~app-admin/apache-tools-${PV}"
 
 S="${WORKDIR}/httpd-${PV}"
+
+# @VARIABLE: MODULE_DEPENDS
+# @DESCRIPTION:
+# This variable needs to be set in the ebuild and contains a space-separated
+# list of dependency tokens each with a module and the module it depends on
+# separated by a colon
+
+# now extend REQUIRED_USE to reflect the module dependencies to portage
+_apache2_set_module_depends() {
+	local dep
+
+	for dep in ${MODULE_DEPENDS} ; do
+		REQUIRED_USE+=" apache2_modules_${dep%:*}? ( apache2_modules_${dep#*:} )"
+	done
+}
+_apache2_set_module_depends
+unset -f _apache2_set_module_depends
 
 # ==============================================================================
 # INTERNAL FUNCTIONS
@@ -135,16 +150,12 @@ setup_mpm() {
 	MY_MPM=""
 	for x in ${IUSE_MPMS} ; do
 		if use apache2_mpms_${x} ; then
-			if [[ -z "${MY_MPM}" ]] ; then
-				MY_MPM=${x}
-				elog
-				elog "Selected MPM: ${MY_MPM}"
-				elog
-			else
-				eerror "You have selected more then one mpm USE-flag."
-				eerror "Only one MPM is supported."
-				die "more then one mpm was specified"
-			fi
+			# there can at most be one MPM selected because of REQUIRED_USE constraints
+			MY_MPM=${x}
+			elog
+			elog "Selected MPM: ${MY_MPM}"
+			elog
+			break
 		fi
 	done
 
@@ -160,20 +171,6 @@ setup_mpm() {
 			elog "Selected default MPM: ${MY_MPM}"
 			elog
 		fi
-	fi
-
-	if has ${MY_MPM} ${IUSE_MPMS_THREAD} && ! use threads ; then
-		eerror "You have selected a threaded MPM but USE=threads is disabled"
-		die "invalid use flag combination"
-	fi
-
-	if has ${MY_MPM} ${IUSE_MPMS_FORK} && use threads ; then
-		eerror "You have selected a non-threaded MPM but USE=threads is enabled"
-		die "invalid use flag combination"
-	fi
-
-	if [[ "${PV}" != 2.2* ]] && [[ "${MY_MPM}" = *prefork* ]] && use apache2_modules_http2 ; then
-		die "http2 does not work with prefork MPM."
 	fi
 }
 
@@ -204,35 +201,6 @@ check_module_critical() {
 		ewarn "Although this is not an error, please be"
 		ewarn "aware that this setup is UNSUPPORTED."
 		ewarn
-	fi
-}
-
-# @VARIABLE: MODULE_DEPENDS
-# @DESCRIPTION:
-# This variable needs to be set in the ebuild and contains a space-separated
-# list of dependency tokens each with a module and the module it depends on
-# separated by a colon
-
-# @FUNCTION: check_module_depends
-# @DESCRIPTION:
-# This internal function makes sure that all inter-module dependencies are
-# satisfied with the current module selection
-check_module_depends() {
-	local err=0
-
-	for m in ${MY_MODS[@]} ; do
-		for dep in ${MODULE_DEPENDS} ; do
-			if [[ "${m}" == "${dep%:*}" ]] ; then
-				if ! use apache2_modules_${dep#*:} ; then
-					eerror "Module '${m}' depends on '${dep#*:}'"
-					err=1
-				fi
-			fi
-		done
-	done
-
-	if [[ ${err} -ne 0 ]] ; then
-		die "invalid use flag combination"
 	fi
 }
 
@@ -281,7 +249,9 @@ setup_modules() {
 		elog "through the following environment variables:"
 		elog
 		elog " SUEXEC_SAFEPATH: Default PATH for suexec (default: '${EPREFIX}/usr/local/bin:${EPREFIX}/usr/bin:${EPREFIX}/bin')"
-		elog "  SUEXEC_LOGFILE: Path to the suexec logfile (default: '${EPREFIX}/var/log/apache2/suexec_log')"
+		if { ver_test ${PV} -ge 2.4.34 && ! use suexec-syslog ; } || ver_test ${PV} -lt 2.4.34 ; then
+			elog "  SUEXEC_LOGFILE: Path to the suexec logfile (default: '${EPREFIX}/var/log/apache2/suexec_log')"
+		fi
 		elog "   SUEXEC_CALLER: Name of the user Apache is running as (default: apache)"
 		elog "  SUEXEC_DOCROOT: Directory in which suexec will run scripts (default: '${EPREFIX}/var/www')"
 		elog "   SUEXEC_MINUID: Minimum UID, which is allowed to run scripts via suexec (default: 1000)"
@@ -291,7 +261,15 @@ setup_modules() {
 		elog
 
 		MY_CONF+=( --with-suexec-safepath="${SUEXEC_SAFEPATH:-${EPREFIX}/usr/local/bin:${EPREFIX}/usr/bin:${EPREFIX}/bin}" )
-		MY_CONF+=( --with-suexec-logfile="${SUEXEC_LOGFILE:-${EPREFIX}/var/log/apache2/suexec_log}" )
+		if ver_test ${PV} -ge 2.4.34 ; then
+			MY_CONF+=( $(use_with !suexec-syslog suexec-logfile "${SUEXEC_LOGFILE:-${EPREFIX}/var/log/apache2/suexec_log}") )
+			MY_CONF+=( $(use_with suexec-syslog) )
+			if use suexec-syslog && use suexec-caps ; then
+				MY_CONF+=( --enable-suexec-capabilities )
+			fi
+		else
+			MY_CONF+=( --with-suexec-logfile="${SUEXEC_LOGFILE:-${EPREFIX}/var/log/apache2/suexec_log}" )
+		fi
 		MY_CONF+=( --with-suexec-bin="${EPREFIX}/usr/sbin/suexec" )
 		MY_CONF+=( --with-suexec-userdir=${SUEXEC_USERDIR:-public_html} )
 		MY_CONF+=( --with-suexec-caller=${SUEXEC_CALLER:-apache} )
@@ -316,50 +294,7 @@ setup_modules() {
 
 	# sort and uniquify MY_MODS
 	MY_MODS=( $(echo ${MY_MODS[@]} | tr ' ' '\n' | sort -u) )
-	check_module_depends
 	check_module_critical
-}
-
-# @VARIABLE: MODULE_DEFINES
-# @DESCRIPTION:
-# This variable needs to be set in the ebuild and contains a space-separated
-# list of tokens each mapping a module to a runtime define which can be
-# specified in APACHE2_OPTS in /etc/conf.d/apache2 to enable this particular
-# module.
-
-# @FUNCTION: generate_load_module
-# @DESCRIPTION:
-# This internal function generates the LoadModule lines for httpd.conf based on
-# the current module selection and MODULE_DEFINES
-generate_load_module() {
-	local endit=0 mod_lines= mod_dir="${ED}/usr/$(get_libdir)/apache2/modules"
-
-	if use static; then
-		sed -i -e "/%%LOAD_MODULE%%/d" \
-			"${GENTOO_PATCHDIR}"/conf/httpd.conf
-		return
-	fi
-
-	for m in ${MY_MODS[@]} ; do
-		if [[ -e "${mod_dir}/mod_${m}.so" ]] ; then
-			for def in ${MODULE_DEFINES} ; do
-				if [[ "${m}" == "${def%:*}" ]] ; then
-					mod_lines="${mod_lines}\n<IfDefine ${def#*:}>"
-					endit=1
-				fi
-			done
-
-			mod_lines="${mod_lines}\nLoadModule ${m}_module modules/mod_${m}.so"
-
-			if [[ ${endit} -ne 0 ]] ; then
-				mod_lines="${mod_lines}\n</IfDefine>"
-				endit=0
-			fi
-		fi
-	done
-
-	sed -i -e "s:%%LOAD_MODULE%%:${mod_lines}:" \
-		"${GENTOO_PATCHDIR}"/conf/httpd.conf
 }
 
 # @FUNCTION: check_upgrade
@@ -412,101 +347,11 @@ apache-2_pkg_setup() {
 	if use userland_BSD; then
 		elog "On BSD systems you need to add the following line to /boot/loader.conf:"
 		elog "  accf_http_load=\"YES\""
+		if use ssl ; then
+			elog "  accf_data_load=\"YES\""
+		fi
 		elog
 	fi
-}
-
-# @FUNCTION: apache-2_src_prepare
-# @DESCRIPTION:
-# This function applies patches, configures a custom file-system layout and
-# rebuilds the configure scripts.
-apache-2_src_prepare() {
-	#fix prefix in conf files etc (bug #433736)
-	use !prefix || sed -e "s@/\(usr\|var\|etc\|run\)/@${EPREFIX}&@g" \
-		-i "${GENTOO_PATCHDIR}"/conf/httpd.conf "${GENTOO_PATCHDIR}"/scripts/* \
-		"${GENTOO_PATCHDIR}"/docs/*.example "${GENTOO_PATCHDIR}"/patches/*.layout \
-		"${GENTOO_PATCHDIR}"/init/* "${GENTOO_PATCHDIR}"/conf/vhosts.d/* \
-		"${GENTOO_PATCHDIR}"/conf/modules.d/* || die
-
-	# 03_all_gentoo-apache-tools.patch injects -Wl,-z,now, which is not a good
-	# idea for everyone
-	case ${CHOST} in
-		*-linux-gnu|*-solaris*|*-freebsd*)
-			# do nothing, these use GNU binutils
-			:
-		;;
-		*-darwin*)
-			sed -i -e 's/-Wl,-z,now/-Wl,-bind_at_load/g' \
-				"${GENTOO_PATCHDIR}"/patches/03_all_gentoo_apache-tools.patch
-		;;
-		*)
-			# patch it out to be like upstream
-			sed -i -e 's/-Wl,-z,now//g' \
-				"${GENTOO_PATCHDIR}"/patches/03_all_gentoo_apache-tools.patch
-		;;
-	esac
-
-	# Use correct multilib libdir in gentoo patches
-	sed -i -e "s:/usr/lib:/usr/$(get_libdir):g" \
-		"${GENTOO_PATCHDIR}"/{conf/httpd.conf,init/*,patches/config.layout} \
-		|| die "libdir sed failed"
-
-	if [[ "${EAPI}" -ge 6 ]] ; then
-		default
-		eapply "${GENTOO_PATCHDIR}"/patches/*.patch
-	else
-		epatch "${GENTOO_PATCHDIR}"/patches/*.patch
-	fi
-
-	if [[ ${EAPI} = 5 ]] ; then
-		# Handle patches from ebuild's PATCHES array if one is given
-		if [[ -n "${PATCHES}" ]] ; then
-			local patchestype=$(declare -p PATCHES 2>&-)
-			if [[ "${patchestype}" != "declare -a PATCHES="* ]] ; then
-				die "Declaring PATCHES as a variable is forbidden. Please use an array instead."
-			fi
-			epatch "${PATCHES[@]}"
-		fi
-
-		# Handle user patches
-		epatch_user
-	fi
-
-	# Don't rename configure.in _before_ any possible user patches!
-	if [[ -f "configure.in" ]] ; then
-		mv configure.{in,ac} || die
-	fi
-
-	# setup the filesystem layout config
-	cat "${GENTOO_PATCHDIR}"/patches/config.layout >> "${S}"/config.layout || \
-		die "Failed preparing config.layout!"
-	sed -i -e "s:version:${PF}:g" "${S}"/config.layout
-
-	# apache2.8 instead of httpd.8 (bug #194828)
-	mv docs/man/{httpd,apache2}.8
-	sed -i -e 's/httpd\.8/apache2.8/g' Makefile.in
-
-	# patched-in MPMs need the build environment rebuilt
-	sed -i -e '/sinclude/d' configure.ac
-	AT_M4DIR=build eautoreconf
-
-	# ${T} must be not group-writable, else grsec TPE will block it
-	chmod g-w "${T}"
-
-	# This package really should upgrade to using pcre's .pc file.
-	cat <<-\EOF >"${T}"/pcre-config
-	#!/bin/bash
-	flags=()
-	for flag; do
-		if [[ ${flag} == "--version" ]]; then
-			flags+=( --modversion )
-		else
-			flags+=( "${flag}" )
-		fi
-	done
-	exec ${PKG_CONFIG} libpcre "${flags[@]}"
-	EOF
-	chmod a+x "${T}"/pcre-config
 }
 
 # @FUNCTION: apache-2_src_configure
@@ -527,6 +372,9 @@ apache-2_src_configure() {
 	# Thanks to Harald van Dijk
 	append-ldflags $(no-as-needed)
 
+	# Brain dead check.
+	tc-is-cross-compiler && export ap_cv_void_ptr_lt_long="no"
+
 	# peruser MPM debugging with -X is nearly impossible
 	if has peruser ${IUSE_MPMS} && use apache2_mpms_peruser ; then
 		use debug && append-flags -DMPM_PERUSER_DEBUG
@@ -534,106 +382,25 @@ apache-2_src_configure() {
 
 	# econf overwrites the stuff from config.layout, so we have to put them into
 	# our myconf line too
+	MY_CONF+=(
+		--includedir="${EPREFIX}"/usr/include/apache2
+		--libexecdir="${EPREFIX}"/usr/$(get_libdir)/apache2/modules
+		--datadir="${EPREFIX}"/var/www/localhost
+		--sysconfdir="${EPREFIX}"/etc/apache2
+		--localstatedir="${EPREFIX}"/var
+		--with-mpm=${MY_MPM}
+		--with-apr="${SYSROOT}${EPREFIX}"/usr
+		--with-apr-util="${SYSROOT}${EPREFIX}"/usr
+		--with-pcre="${T}"/pcre-config
+		--with-z="${EPREFIX}"/usr
+		--with-port=80
+		--with-program-name=apache2
+		--enable-layout=${APACHE_LAYOUT}
+	)
 	ac_cv_path_PKGCONFIG=${PKG_CONFIG} \
-	econf \
-		--includedir="${EPREFIX}"/usr/include/apache2 \
-		--libexecdir="${EPREFIX}"/usr/$(get_libdir)/apache2/modules \
-		--datadir="${EPREFIX}"/var/www/localhost \
-		--sysconfdir="${EPREFIX}"/etc/apache2 \
-		--localstatedir="${EPREFIX}"/var \
-		--with-mpm=${MY_MPM} \
-		--with-apr="${SYSROOT}${EPREFIX}"/usr \
-		--with-apr-util="${SYSROOT}${EPREFIX}"/usr \
-		--with-pcre="${T}"/pcre-config \
-		--with-z="${EPREFIX}"/usr \
-		--with-port=80 \
-		--with-program-name=apache2 \
-		--enable-layout=Gentoo \
-		"${MY_CONF[@]}"
+	econf "${MY_CONF[@]}"
 
-	sed -i -e 's:apache2\.conf:httpd.conf:' include/ap_config_auto.h
-}
-
-# @FUNCTION: apache-2_src_install
-# @DESCRIPTION:
-# This function runs `emake install' and generates, installs and adapts the gentoo
-# specific configuration files found in the tarball
-apache-2_src_install() {
-	emake DESTDIR="${D}" MKINSTALLDIRS="mkdir -p" install
-
-	# install our configuration files
-	keepdir /etc/apache2/vhosts.d
-	keepdir /etc/apache2/modules.d
-
-	generate_load_module
-	insinto /etc/apache2
-	doins -r "${GENTOO_PATCHDIR}"/conf/*
-	use apache2_modules_mime_magic && doins docs/conf/magic
-
-	insinto /etc/logrotate.d
-	newins "${GENTOO_PATCHDIR}"/scripts/apache2-logrotate apache2
-
-	# generate a sane default APACHE2_OPTS
-	APACHE2_OPTS="-D DEFAULT_VHOST -D INFO"
-	use doc && APACHE2_OPTS="${APACHE2_OPTS} -D MANUAL"
-	use ssl && APACHE2_OPTS="${APACHE2_OPTS} -D SSL -D SSL_DEFAULT_VHOST"
-	use suexec && APACHE2_OPTS="${APACHE2_OPTS} -D SUEXEC"
-	if has negotiation ${APACHE2_MODULES} && use apache2_modules_negotiation; then
-		APACHE2_OPTS="${APACHE2_OPTS} -D LANGUAGE"
-	fi
-
-	sed -i -e "s:APACHE2_OPTS=\".*\":APACHE2_OPTS=\"${APACHE2_OPTS}\":" \
-		"${GENTOO_PATCHDIR}"/init/apache2.confd || die "sed failed"
-
-	newconfd "${GENTOO_PATCHDIR}"/init/apache2.confd apache2
-	newinitd "${GENTOO_PATCHDIR}"/init/apache2.initd apache2
-
-	# install apache2ctl wrapper for our init script if available
-	if test -e "${GENTOO_PATCHDIR}"/scripts/apache2ctl; then
-		exeinto /usr/sbin
-		doexe "${GENTOO_PATCHDIR}"/scripts/apache2ctl
-	else
-		dosym /etc/init.d/apache2 /usr/sbin/apache2ctl
-	fi
-
-	# provide legacy symlink for apxs, bug 177697
-	dosym apxs /usr/sbin/apxs2
-
-	# install some documentation
-	dodoc ABOUT_APACHE CHANGES LAYOUT README README.platforms VERSIONING
-	dodoc "${GENTOO_PATCHDIR}"/docs/*
-
-	# drop in a convenient link to the manual
-	if use doc ; then
-		sed -i -e "s:VERSION:${PVR}:" "${ED}/etc/apache2/modules.d/00_apache_manual.conf"
-		docompress -x /usr/share/doc/${PF}/manual # 503640
-	else
-		rm -f "${ED}/etc/apache2/modules.d/00_apache_manual.conf"
-		rm -Rf "${ED}/usr/share/doc/${PF}/manual"
-	fi
-
-	# the default icons and error pages get stored in
-	# /usr/share/apache2/{error,icons}
-	dodir /usr/share/apache2
-	mv -f "${ED}/var/www/localhost/error" "${ED}/usr/share/apache2/error"
-	mv -f "${ED}/var/www/localhost/icons" "${ED}/usr/share/apache2/icons"
-	rm -rf "${ED}/var/www/localhost/"
-	eend $?
-
-	# set some sane permissions for suexec
-	if use suexec ; then
-		fowners 0:${SUEXEC_CALLER:-apache} /usr/sbin/suexec
-		fperms 4710 /usr/sbin/suexec
-		# provide legacy symlink for suexec, bug 177697
-		dosym /usr/sbin/suexec /usr/sbin/suexec2
-	fi
-
-	# empty dirs
-	for i in /var/lib/dav /var/log/apache2 /var/cache/apache2 ; do
-		keepdir ${i}
-		fowners apache:apache ${i}
-		fperms 0750 ${i}
-	done
+	sed -i -e 's:apache2\.conf:httpd.conf:' include/ap_config_auto.h || die
 }
 
 # @FUNCTION: apache-2_pkg_postinst
@@ -668,4 +435,4 @@ apache-2_pkg_postinst() {
 
 }
 
-EXPORT_FUNCTIONS pkg_setup src_prepare src_configure src_install pkg_postinst
+EXPORT_FUNCTIONS pkg_setup src_configure pkg_postinst

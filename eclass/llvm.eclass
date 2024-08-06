@@ -1,4 +1,3 @@
-# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: llvm.eclass
@@ -6,6 +5,7 @@
 # Michał Górny <mgorny@gentoo.org>
 # @AUTHOR:
 # Michał Górny <mgorny@gentoo.org>
+# @SUPPORTED_EAPIS: 6 7
 # @BLURB: Utility functions to build against slotted LLVM
 # @DESCRIPTION:
 # The llvm.eclass provides utility functions that can be used to build
@@ -16,20 +16,21 @@
 # a proper dependency string yourself to guarantee that appropriate
 # version of LLVM is installed.
 #
-# Example use for a package supporting LLVM 3.8 to 5:
+# Example use for a package supporting LLVM 9 to 11:
 # @CODE
-# inherit cmake-utils llvm
+# inherit cmake llvm
 #
 # RDEPEND="
-#	<sys-devel/llvm-6_rc:=
+#	<sys-devel/llvm-11:=
 #	|| (
-#		sys-devel/llvm:5
-#		sys-devel/llvm:4
-#		>=sys-devel/llvm-3.8:0
+#		sys-devel/llvm:9
+#		sys-devel/llvm:10
+#		sys-devel/llvm:11
 #	)
 # "
+# DEPEND=${RDEPEND}
 #
-# LLVM_MAX_SLOT=5
+# LLVM_MAX_SLOT=11
 #
 # # only if you need to define one explicitly
 # pkg_setup() {
@@ -40,16 +41,17 @@
 #
 # Example for a package needing LLVM+clang w/ a specific target:
 # @CODE
-# inherit cmake-utils llvm
+# inherit cmake llvm
 #
 # # note: do not use := on both clang and llvm, it can match different
 # # slots then. clang pulls llvm in, so we can skip the latter.
 # RDEPEND="
-#	>=sys-devel/clang-4:=[llvm_targets_AMDGPU(+)]
+#	>=sys-devel/clang-9:=[llvm_targets_AMDGPU(+)]
 # "
+# DEPEND=${RDEPEND}
 #
 # llvm_check_deps() {
-#	has_version "sys-devel/clang:${LLVM_SLOT}[llvm_targets_AMDGPU(+)]"
+#	has_version -d "sys-devel/clang:${LLVM_SLOT}[llvm_targets_AMDGPU(+)]"
 # }
 # @CODE
 
@@ -57,34 +59,45 @@ case "${EAPI:-0}" in
 	0|1|2|3|4|5)
 		die "Unsupported EAPI=${EAPI:-0} (too old) for ${ECLASS}"
 		;;
-	6)
+	6|7)
 		;;
 	*)
 		die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}"
 		;;
 esac
 
-EXPORT_FUNCTIONS pkg_setup
-
 if [[ ! ${_LLVM_ECLASS} ]]; then
+_LLVM_ECLASS=1
 
-# @ECLASS-VARIABLE: LLVM_MAX_SLOT
+# make sure that the versions installing straight into /usr/bin
+# are uninstalled
+DEPEND="!!sys-devel/llvm:0"
+
+# @ECLASS_VARIABLE: LLVM_MAX_SLOT
 # @DEFAULT_UNSET
 # @DESCRIPTION:
 # Highest LLVM slot supported by the package. Needs to be set before
 # llvm_pkg_setup is called. If unset, no upper bound is assumed.
 
-# @ECLASS-VARIABLE: _LLVM_KNOWN_SLOTS
+# @ECLASS_VARIABLE: _LLVM_KNOWN_SLOTS
 # @INTERNAL
 # @DESCRIPTION:
 # Correct values of LLVM slots, newest first.
-declare -g -r _LLVM_KNOWN_SLOTS=( 6 5 4 )
+declare -g -r _LLVM_KNOWN_SLOTS=( {16..8} )
 
-# @FUNCTION: get_llvm_prefix
-# @USAGE: [<max_slot>]
+# @FUNCTION: get_llvm_slot
+# @USAGE: [-b|-d] [<max_slot>]
 # @DESCRIPTION:
 # Find the newest LLVM install that is acceptable for the package,
-# and print an absolute path to it.
+# and print its major version number (i.e. slot).
+#
+# If -b is specified, the checks are performed relative to BROOT,
+# and BROOT-path is returned.  This is appropriate when your package
+# calls llvm-config executable.
+#
+# If -d is specified, the checks are performed relative to ESYSROOT,
+# and ESYSROOT-path is returned.  This is appropriate when your package
+# uses CMake find_package(LLVM).  -d is the default.
 #
 # If <max_slot> is specified, then only LLVM versions that are not newer
 # than <max_slot> will be considered. Otherwise, all LLVM versions would
@@ -99,8 +112,17 @@ declare -g -r _LLVM_KNOWN_SLOTS=( 6 5 4 )
 # is acceptable, false otherwise. If llvm_check_deps() is not defined,
 # the function defaults to checking whether sys-devel/llvm:${LLVM_SLOT}
 # is installed.
-get_llvm_prefix() {
+get_llvm_slot() {
 	debug-print-function ${FUNCNAME} "${@}"
+
+	local hv_switch=-d
+	while [[ ${1} == -* ]]; do
+		case ${1} in
+			-b|-d) hv_switch=${1};;
+			*) break;;
+		esac
+		shift
+	done
 
 	local max_slot=${1}
 	local slot
@@ -119,10 +141,10 @@ get_llvm_prefix() {
 			llvm_check_deps || continue
 		else
 			# check if LLVM package is installed
-			has_version "sys-devel/llvm:${slot}" || continue
+			has_version ${hv_switch} "sys-devel/llvm:${slot}" || continue
 		fi
 
-		echo "${EPREFIX}/usr/lib/llvm/${slot}"
+		echo "${slot}"
 		return
 	done
 
@@ -131,14 +153,81 @@ get_llvm_prefix() {
 		die "${FUNCNAME}: invalid max_slot=${max_slot}"
 	fi
 
-	# fallback to :0
-	# assume it's always <= 4 (the lower max_slot allowed)
-	if has_version "sys-devel/llvm:0"; then
-		echo "${EPREFIX}/usr"
-		return
-	fi
+	die "No LLVM slot${1:+ <= ${1}} satisfying the package's dependencies found installed!"
+}
 
-	die "No LLVM slot${1:+ <= ${1}} found installed!"
+# @FUNCTION: get_llvm_prefix
+# @USAGE: [-b|-d] [<max_slot>]
+# @DESCRIPTION:
+# Find the newest LLVM install that is acceptable for the package,
+# and print an absolute path to it.
+#
+# The options and behavior is the same as for get_llvm_slot.
+get_llvm_prefix() {
+	debug-print-function ${FUNCNAME} "${@}"
+
+	local prefix=${ESYSROOT}
+	[[ ${1} == -b ]] && prefix=${BROOT}
+
+	echo "${prefix}/usr/lib/llvm/$(get_llvm_slot "${@}")"
+}
+
+# @FUNCTION: llvm_fix_clang_version
+# @USAGE: <variable-name>...
+# @DESCRIPTION:
+# Fix the clang compiler name in specified variables to include
+# the major version, to prevent PATH alterations from forcing an older
+# clang version being used.
+llvm_fix_clang_version() {
+	debug-print-function ${FUNCNAME} "${@}"
+
+	local shopt_save=$(shopt -p -o noglob)
+	set -f
+	local var
+	for var; do
+		local split=( ${!var} )
+		case ${split[0]} in
+			*clang|*clang++|*clang-cpp)
+				local version=()
+				read -r -a version < <("${split[0]}" --version)
+				local major=${version[-1]%%.*}
+				if [[ -n ${major//[0-9]} ]]; then
+					die "${var}=${!var} produced invalid --version: ${version[*]}"
+				fi
+
+				split[0]+=-${major}
+				if ! type -P "${split[0]}" &>/dev/null; then
+					die "${split[0]} does not seem to exist"
+				fi
+				declare -g "${var}=${split[*]}"
+				;;
+		esac
+	done
+	${shopt_save}
+}
+
+# @FUNCTION: llvm_fix_tool_path
+# @USAGE: <variable-name>...
+# @DESCRIPTION:
+# Fix the LLVM tools referenced in the specified variables to their
+# current location, to prevent PATH alterations from forcing older
+# versions being used.
+llvm_fix_tool_path() {
+	debug-print-function ${FUNCNAME} "${@}"
+
+	local shopt_save=$(shopt -p -o noglob)
+	set -f
+	local var
+	for var; do
+		local split=( ${!var} )
+		local path=$(type -P ${split[0]} 2>/dev/null)
+		# if it resides in one of the LLVM prefixes, it's an LLVM tool!
+		if [[ ${path} == "${BROOT}/usr/lib/llvm"* ]]; then
+			split[0]=${path}
+			declare -g "${var}=${split[*]}"
+		fi
+	done
+	${shopt_save}
 }
 
 # @FUNCTION: llvm_pkg_setup
@@ -159,15 +248,40 @@ llvm_pkg_setup() {
 	debug-print-function ${FUNCNAME} "${@}"
 
 	if [[ ${MERGE_TYPE} != binary ]]; then
-		local llvm_prefix=$(get_llvm_prefix "${LLVM_MAX_SLOT}")
+		LLVM_SLOT=$(get_llvm_slot "${LLVM_MAX_SLOT}")
 
-		# do not prepend /usr/bin, it's not necessary and breaks other
-		# prepends, https://bugs.gentoo.org/622866
-		if [[ ${llvm_prefix} != ${EPREFIX}/usr ]]; then
-			export PATH=${llvm_prefix}/bin:${PATH}
-		fi
+		llvm_fix_clang_version CC CPP CXX
+		# keep in sync with profiles/features/llvm/make.defaults!
+		llvm_fix_tool_path ADDR2LINE AR AS LD NM OBJCOPY OBJDUMP RANLIB
+		llvm_fix_tool_path READELF STRINGS STRIP
+
+		local prefix=${ESYSROOT}
+		local llvm_path=${prefix}/usr/lib/llvm/${LLVM_SLOT}/bin
+		local IFS=:
+		local split_path=( ${PATH} )
+		local new_path=()
+		local x added=
+
+		# prepend new path before first LLVM version found
+		for x in "${split_path[@]}"; do
+			if [[ ${x} == */usr/lib/llvm/*/bin ]]; then
+				if [[ ${x} != ${llvm_path} ]]; then
+					new_path+=( "${llvm_path}" )
+				elif [[ ${added} && ${x} == ${llvm_path} ]]; then
+					# deduplicate
+					continue
+				fi
+				added=1
+			fi
+			new_path+=( "${x}" )
+		done
+		# ...or to the end of PATH
+		[[ ${added} ]] || new_path+=( "${llvm_path}" )
+
+		export PATH=${new_path[*]}
 	fi
 }
 
-_LLVM_ECLASS=1
 fi
+
+EXPORT_FUNCTIONS pkg_setup

@@ -1,0 +1,8 @@
+slim:
+  generator: github-1
+  packages:
+    - slim-toolkit:
+        github:
+          user: slimtoolkit
+          repo: slim
+          query: releases

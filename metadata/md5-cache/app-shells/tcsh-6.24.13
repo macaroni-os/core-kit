@@ -1,0 +1,15 @@
+BDEPEND=>=app-portage/elt-patches-20170815 || ( >=sys-devel/automake-1.16.5:1.16 ) >=sys-devel/autoconf-2.71 >=sys-devel/libtool-2.4
+DEFINED_PHASES=configure install prepare
+DEPEND=>=sys-libs/ncurses-5.1:0= sys-libs/libxcrypt virtual/libiconv sys-devel/gettext doc? ( dev-lang/perl )
+DESCRIPTION=Enhanced version of the Berkeley C shell (csh)
+EAPI=7
+HOMEPAGE=https://www.tcsh.org/
+IUSE=nls doc
+KEYWORDS=*
+LICENSE=BSD
+RDEPEND=>=sys-libs/ncurses-5.1:0= sys-libs/libxcrypt virtual/libiconv
+RESTRICT=test
+SLOT=0
+SRC_URI=https://astron.com/pub/tcsh/tcsh-6.24.13.tar.gz -> tcsh-6.24.13.tar.gz
+_eclasses_=autotools	e9ade2787b2f54643c7cdffbfa1cca9c	eutils	6e6c2737b59a4b982de6fb3ecefd87f8	flag-o-matic	d0939f99dd528dd0c5ec25284877bf5c	libtool	f143db5a74ccd9ca28c1234deffede96	multilib	d410501a125f99ffb560b0c523cd3d1e	prefix	e51c7882b7b721e54e684f7eb143cbfe	toolchain-funcs	24921b57d6561d87cbef4916a296ada4
+_md5_=9ab3d2f59a3fa016f38ba765a760e628

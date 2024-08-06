@@ -1,50 +1,61 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: java-vm-2.eclass
 # @MAINTAINER:
 # java@gentoo.org
+# @SUPPORTED_EAPIS: 5 6 7 8
 # @BLURB: Java Virtual Machine eclass
 # @DESCRIPTION:
 # This eclass provides functionality which assists with installing
 # virtual machines, and ensures that they are recognized by java-config.
 
 case ${EAPI:-0} in
-	5|6) ;;
+	[5678]) ;;
 	*) die "EAPI=${EAPI} is not supported" ;;
 esac
 
-inherit fdo-mime multilib pax-utils prefix
+inherit multilib pax-utils prefix xdg-utils
 
 EXPORT_FUNCTIONS pkg_setup pkg_postinst pkg_prerm pkg_postrm
 
 RDEPEND="
-	>=dev-java/java-config-2.2.0-r3
-	>=app-eselect/eselect-java-0.2.0"
+	dev-java/java-config
+	app-eselect/eselect-java
+"
 DEPEND="${RDEPEND}"
+
+if [[ ${EAPI} != 5 ]]; then
+  BDEPEND="app-arch/unzip"
+  IDEPEND="app-eselect/eselect-java"
+
+  if [[ ${EAPI} == 6 ]]; then
+	  DEPEND+=" ${BDEPEND}"
+  fi
+fi
 
 export WANT_JAVA_CONFIG=2
 
 
-# @ECLASS-VARIABLE: JAVA_VM_CONFIG_DIR
+# @ECLASS_VARIABLE: JAVA_VM_CONFIG_DIR
 # @INTERNAL
 # @DESCRIPTION:
 # Where to place the vm env file.
 JAVA_VM_CONFIG_DIR="/usr/share/java-config-2/vm"
 
-# @ECLASS-VARIABLE: JAVA_VM_DIR
+# @ECLASS_VARIABLE: JAVA_VM_DIR
 # @INTERNAL
 # @DESCRIPTION:
 # Base directory for vm links.
 JAVA_VM_DIR="/usr/lib/jvm"
 
-# @ECLASS-VARIABLE: JAVA_VM_SYSTEM
+# @ECLASS_VARIABLE: JAVA_VM_SYSTEM
 # @INTERNAL
 # @DESCRIPTION:
 # Link for system-vm
 JAVA_VM_SYSTEM="/etc/java-config-2/current-system-vm"
 
-# @ECLASS-VARIABLE: JAVA_VM_BUILD_ONLY
+# @ECLASS_VARIABLE: JAVA_VM_BUILD_ONLY
 # @DESCRIPTION:
 # Set to YES to mark a vm as build-only.
 JAVA_VM_BUILD_ONLY="${JAVA_VM_BUILD_ONLY:-FALSE}"
@@ -73,34 +84,49 @@ java-vm-2_pkg_setup() {
 # invalid. Also update mime database.
 
 java-vm-2_pkg_postinst() {
-	# Note that we cannot rely on java-config here, as it will silently recognize
-	# e.g. icedtea6-bin as valid system VM if icedtea6 is set but invalid (e.g. due
-	# to the migration to icedtea-6)
-	if [[ ! -L "${EROOT}${JAVA_VM_SYSTEM}" ]]; then
-		java_set_default_vm_
-	else
-		local current_vm_path=$(readlink "${EROOT}${JAVA_VM_SYSTEM}")
-		local current_vm=$(basename "${ROOT}${current_vm_path}")
-		if [[ ! -L "${EROOT}${JAVA_VM_DIR}/${current_vm}" ]]; then
-			java_set_default_vm_
-		fi
+	if [[ ! -d ${EROOT}${JAVA_VM_SYSTEM} ]]; then
+		eselect java-vm set system "${VMHANDLE}"
+		einfo "${P} set as the default system-vm."
 	fi
 
-	fdo-mime_desktop_database_update
+	xdg_desktop_database_update
 }
 
+# @FUNCTION: has_eselect_java-vm_update
+# @INTERNAL
+# @DESCRIPTION:
+# Checks if an eselect-java version providing "eselect java-vm update"
+# is available.
+# @RETURN: 0 if >=app-eselect/eselect-java-0.5 is installed, 1 otherwise.
+has_eselect_java-vm_update() {
+	local has_version_args="-b"
+	if [[ ${EAPI} == 6 ]]; then
+		has_version_args="--host-root"
+	fi
+
+	has_version "${has_version_args}" ">=app-eselect/eselect-java-0.5"
+}
 
 # @FUNCTION: java-vm-2_pkg_prerm
 # @DESCRIPTION:
 # default pkg_prerm
 #
-# Warn user if removing system-vm.
+# Does nothing if eselect-java-0.5 or newer is available.  Otherwise,
+# warn user if removing system-vm.
 
 java-vm-2_pkg_prerm() {
-	if [[ "$(GENTOO_VM="" java-config -f 2>/dev/null)" == "${VMHANDLE}" && -z "${REPLACED_BY_VERSION}" ]]; then
-		ewarn "It appears you are removing your system-vm!"
-		ewarn "Please run java-config -L to list available VMs,"
-		ewarn "then use java-config -S to set a new system-vm!"
+  if [[ ${EAPI} != 5 ]]; then
+    if has_eselect_java-vm_update; then
+      # We will potentially switch to a new Java system VM in
+      # pkg_postrm().
+      return
+    fi
+  fi
+
+	if [[ $(GENTOO_VM= java-config -f 2>/dev/null) == ${VMHANDLE} && -z ${REPLACED_BY_VERSION} ]]; then
+		ewarn "It appears you are removing your system-vm! Please run"
+		ewarn "\"eselect java-vm list\" to list available VMs, then use"
+		ewarn "\"eselect java-vm set system\" to set a new system-vm!"
 	fi
 }
 
@@ -109,22 +135,16 @@ java-vm-2_pkg_prerm() {
 # @DESCRIPTION:
 # default pkg_postrm
 #
-# Update mime database.
+# Invoke "eselect java-vm update" if eselect-java 0.5, or newer, is
+# available.  Also update the mime database.
 
 java-vm-2_pkg_postrm() {
-	fdo-mime_desktop_database_update
-}
-
-
-# @FUNCTION: java_set_default_vm_
-# @INTERNAL
-# @DESCRIPTION:
-# Set system-vm.
-
-java_set_default_vm_() {
-	java-config-2 --set-system-vm="${VMHANDLE}"
-
-	einfo " ${P} set as the default system-vm."
+	xdg_desktop_database_update
+	if [[ ${EAPI} != 5 ]]; then
+    if has_eselect_java-vm_update; then
+      eselect java-vm update
+    fi
+  fi
 }
 
 
@@ -142,7 +162,7 @@ get_system_arch() {
 	case $(get_abi_CHOST ${abi}) in
 		mips*l*) echo mipsel ;;
 		mips*) echo mips ;;
-		ppc64le*) echo ppc64le ;;
+		powerpc64le*) echo ppc64le ;;
 		*)
 			case ${abi} in
 				*_fbsd) get_system_arch ${abi%_fbsd} ;;
@@ -205,7 +225,7 @@ set_java_env() {
 
 	# Make the symlink
 	dodir "${JAVA_VM_DIR}"
-	dosym ${java_home#${EPREFIX}} ${JAVA_VM_DIR}/${VMHANDLE}
+	dosym "${java_home}" "${JAVA_VM_DIR}/${VMHANDLE}"
 }
 
 
@@ -247,7 +267,7 @@ java-vm_install-env() {
 
 	# Make the symlink
 	dodir "${JAVA_VM_DIR}"
-	dosym "${java_home#${EPREFIX}}" "${JAVA_VM_DIR}/${VMHANDLE}"
+	dosym "${java_home}" "${JAVA_VM_DIR}/${VMHANDLE}"
 }
 
 

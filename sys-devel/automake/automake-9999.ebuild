@@ -1,27 +1,27 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+EAPI=7
 
-inherit eutils versionator
+PYTHON_COMPAT=( python3_{8,9,10} )
+
+inherit python-any-r1
 
 if [[ ${PV} == 9999 ]] ; then
-	EGIT_REPO_URI="git://git.savannah.gnu.org/${PN}.git
-		http://git.savannah.gnu.org/r/${PN}.git"
-
+	EGIT_REPO_URI="https://git.savannah.gnu.org/r/${PN}.git"
 	inherit git-r3
 else
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~ppc-aix ~x64-cygwin ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~m68k-mint ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
 	if [[ ${PV/_beta} == ${PV} ]]; then
-		MY_P=${P}
+		MY_P="${P}"
 		SRC_URI="mirror://gnu/${PN}/${P}.tar.xz
-			ftp://alpha.gnu.org/pub/gnu/${PN}/${MY_P}.tar.xz"
+			https://alpha.gnu.org/pub/gnu/${PN}/${MY_P}.tar.xz"
+		KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
 	else
-		MY_PV="$(get_major_version).$(($(get_version_component_range 2)-1))b"
+		MY_PV="$(ver_cut 1).$(($(ver_cut 2)-1))b"
 		MY_P="${PN}-${MY_PV}"
 
 		# Alpha/beta releases are not distributed on the usual mirrors.
-		SRC_URI="ftp://alpha.gnu.org/pub/gnu/${PN}/${MY_P}.tar.xz"
+		SRC_URI="https://alpha.gnu.org/pub/gnu/${PN}/${MY_P}.tar.xz"
 	fi
 	S="${WORKDIR}/${MY_P}"
 fi
@@ -32,14 +32,29 @@ HOMEPAGE="https://www.gnu.org/software/automake/"
 LICENSE="GPL-2"
 # Use Gentoo versioning for slotting.
 SLOT="${PV:0:4}"
-IUSE=""
+IUSE="test"
+RESTRICT="!test? ( test )"
 
 RDEPEND="dev-lang/perl
-	>=sys-devel/automake-wrapper-10
+	>=sys-devel/automake-wrapper-11
 	>=sys-devel/autoconf-2.69:*
 	sys-devel/gnuconfig"
-DEPEND="${RDEPEND}
-	sys-apps/help2man"
+DEPEND="${RDEPEND}"
+BDEPEND="
+	app-arch/gzip
+	sys-apps/help2man
+	test? ( ${PYTHON_DEPS} )
+"
+
+PATCHES=(
+	"${FILESDIR}"/automake-1.16.2-py3-compile.patch
+)
+# All patches have been submitted upstream.
+
+pkg_setup() {
+	# Avoid python-any-r1_pkg_setup
+	:
+}
 
 src_prepare() {
 	default
@@ -48,13 +63,23 @@ src_prepare() {
 	# to be a bit esoteric, and the script does `set -e` itself.
 	./bootstrap || die
 	sed -i -e "/APIVERSION=/s:=.*:=${SLOT}:" configure || die
+
+	# Bug 628912
+	if ! has_version sys-apps/texinfo ; then
+		touch doc/{stamp-vti,version.texi,automake.info} || die
+	fi
+}
+
+src_configure() {
+	use test && python_setup
+	default
 }
 
 # slot the info pages.  do this w/out munging the source so we don't have
 # to depend on texinfo to regen things.  #464146 (among others)
 slot_info_pages() {
 	pushd "${ED}"/usr/share/info >/dev/null || die
-	rm -f dir || dir
+	rm -f dir
 
 	# Rewrite all the references to other pages.
 	# before: * aclocal-invocation: (automake)aclocal Invocation.   Generating aclocal.m4.
@@ -93,6 +118,13 @@ src_install() {
 	# w/a symlink to a specific gnuconfig version
 	local x
 	for x in guess sub ; do
-		dosym ../gnuconfig/config.${x} /usr/share/${PN}-${SLOT}/config.${x}
+		dosym ../gnuconfig/config.${x} \
+			/usr/share/${PN}-${SLOT}/config.${x}
 	done
+
+	# Avoid QA message about pre-compressed file in docs
+	local tarfile="${ED}/usr/share/doc/${PF}/amhello-1.0.tar.gz"
+	if [[ -f "${tarfile}" ]] ; then
+		gunzip "${tarfile}" || die
+	fi
 }

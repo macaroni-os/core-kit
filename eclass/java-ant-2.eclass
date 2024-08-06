@@ -1,4 +1,4 @@
-# Copyright 2004-2017 Gentoo Foundation
+# Copyright 2004-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: java-ant-2.eclass
@@ -41,10 +41,10 @@ inherit java-utils-2 multilib
 # @DEFAULT_UNSET
 # @DESCRIPTION:
 # Setting this variable non-empty before inheriting java-ant-2 disables adding
-# dev-java/ant-core into DEPEND.
+# dev-java/ant-bin into DEPEND.
 if [[ -z "${JAVA_ANT_DISABLE_ANT_CORE_DEP}" ]]; then
-	JAVA_ANT_E_DEPEND+=" >=dev-java/ant-core-1.8.2"
-	[[ "${EAPI:-0}" != 0 ]] && JAVA_ANT_E_DEPEND+=":0"
+	JAVA_ANT_E_DEPEND+=" >=dev-java/ant-bin-1.10.0"
+	[[ "${EAPI:-0}" != 0 ]] && JAVA_ANT_E_DEPEND+=":1.10"
 fi
 
 # add ant tasks specified in WANT_ANT_TASKS to DEPEND
@@ -56,12 +56,10 @@ if [[ $? != 0 ]]; then
 	die "java-pkg_ant-tasks-depend() failed"
 fi
 
-# We need some tools from javatoolkit. We also need portage 2.1 for phase hooks
-# and ant dependencies constructed above. Python is there for
-# java-ant_remove-taskdefs
+# We need some tools from javatoolkit. We also need ant dependencies
+# constructed above.
 JAVA_ANT_E_DEPEND="${JAVA_ANT_E_DEPEND}
 	   ${ANT_TASKS_DEPEND}
-	   ${JAVA_PKG_PORTAGE_DEP}
 	   >=dev-java/javatoolkit-0.3.0-r2"
 
 # this eclass must be inherited after java-pkg-2 or java-pkg-opt-2
@@ -226,8 +224,8 @@ java-ant_bsfix_files() {
 			files+=( -f "${file}" )
 		done
 
-		local rewriter3="${EPREFIX}/usr/$(get_libdir)/javatoolkit/bin/xml-rewrite-3.py"
-		local rewriter4="${EPREFIX}/usr/$(get_libdir)/javatoolkit/bin/build-xml-rewrite"
+		local rewriter3="${EPREFIX}/usr/lib/javatoolkit/bin/xml-rewrite-3.py"
+		local rewriter4="${EPREFIX}/usr/lib/javatoolkit/bin/build-xml-rewrite"
 
 		if [[ -x ${rewriter4} && ${JAVA_ANT_ENCODING} ]]; then
 			[[ ${JAVA_ANT_REWRITE_CLASSPATH} ]] && local gcp="-g"
@@ -359,40 +357,6 @@ java-ant_rewrite-classpath() {
 	fi
 }
 
-# @FUNCTION: java-ant_remove-taskdefs
-# @USAGE: [--name NAME] [path/to/build.xml]
-# @DESCRIPTION:
-# Removes (named) taskdef elements from the build.xml file.
-# When --name NAME is specified, only remove taskdef with name NAME. Otherwise,
-# all taskdefs are removed.
-# The file to rewrite defaults to build.xml when not specified.
-java-ant_remove-taskdefs() {
-	debug-print-function ${FUNCNAME} $*
-
-	die "${FUNCNAME} has been banned, see bug #479838."
-
-	local task_name
-	if [[ "${1}" == --name ]]; then
-		task_name="${2}"
-		shift 2
-	fi
-	local file="${1:-build.xml}"
-	echo "Removing taskdefs from ${file}"
-	python <<EOF
-import sys
-from xml.dom.minidom import parse
-dom = parse("${file}")
-for elem in dom.getElementsByTagName('taskdef'):
-	if (len("${task_name}") == 0 or elem.getAttribute("name") == "${task_name}"):
-		elem.parentNode.removeChild(elem)
-		elem.unlink()
-f = open("${file}", "w")
-dom.writexml(f)
-f.close()
-EOF
-	[[ $? != 0 ]] && die "Removing taskdefs failed"
-}
-
 # @FUNCTION: java-ant_ignore-system-classes
 # @USAGE: [path/to/build.xml]
 # @DESCRIPTION:
@@ -412,7 +376,7 @@ java-ant_ignore-system-classes() {
 # Run the right xml-rewrite binary with the given arguments
 java-ant_xml-rewrite() {
 	local gen2="${EPREFIX}/usr/bin/xml-rewrite-2.py"
-	local gen2_1="${EPREFIX}/usr/$(get_libdir)/javatoolkit/bin/xml-rewrite-2.py"
+	local gen2_1="${EPREFIX}/usr/lib/javatoolkit/bin/xml-rewrite-2.py"
 	# gen1 is deprecated
 	if [[ -x "${gen2}" ]]; then
 		${gen2} "${@}" || die "${gen2} failed"

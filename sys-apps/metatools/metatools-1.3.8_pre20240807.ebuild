@@ -5,10 +5,10 @@ EAPI=7
 PYTHON_COMPAT=( python3+ )
 inherit distutils-r1
 
-DESCRIPTION="Funtoo's metatools -- autogeneration framework."
-HOMEPAGE="https://code.funtoo.org/bitbucket/users/drobbins/repos/funtoo-metatools/browse https://pypi.org/project/funtoo-metatools/"
-SRC_URI="https://files.pythonhosted.org/packages/6d/2d/c590e67352d8f5559e462d288f92245d9865e414bc0af8adc8b4454eb1fd/funtoo_metatools-1.3.7.tar.gz -> funtoo_metatools-1.3.7.tar.gz"
+DESCRIPTION="M.A.R.K. metatools -- autogeneration framework."
+HOMEPAGE="https://github.com/macaroni-os/funtoo-metatools"
 
+RESTRICT="network-sandbox"
 DEPEND=">=dev-python/subpop-2.0.0[${PYTHON_USEDEP}]"
 RDEPEND="
 	app-arch/unzip
@@ -30,9 +30,17 @@ IUSE=""
 SLOT="0"
 LICENSE="Apache-2.0"
 KEYWORDS="*"
-S="${WORKDIR}/funtoo_metatools-1.3.7"
+SRC_URI="https://github.com/macaroni-os/funtoo-metatools/archive/d39a3a6dab7c8ae8aac5efc38af6131ac1bd2b69.zip -> metatools-1.3.8_pre20240807-d39a3a6.zip"
+S="${WORKDIR}/funtoo-metatools-d39a3a6dab7c8ae8aac5efc38af6131ac1bd2b69"
+
 
 src_configure() {
+	# Create setup.py
+	sed -e "s/##VERSION##/${PV/_*/}/g" \
+		setup.py.in > setup.py
+
 	unset PYTHONPATH
 	default
 }
+
+# vim: syn=ebuild noet ts=4

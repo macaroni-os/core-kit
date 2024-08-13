@@ -8,7 +8,7 @@ DESCRIPTION="Encrypted overlay filesystem written in Go"
 HOMEPAGE="https://nuetzlich.net/gocryptfs https://github.com/rfjakob/gocryptfs/releases"
 
 SRC_URI="https://github.com/rfjakob/gocryptfs/tarball/7d4fb1fd0667d1fed945a519de86919cb90f4edb -> gocryptfs-2.4.0-7d4fb1f.tar.gz
-https://direct.funtoo.org/f2/91/55/f291558c129c3250d4c8d688a6c528a2fe11894fdb28b57275e68a4d7099f6f4c6918d19d8602072b52579a6bad480a575c2986de04e9cddbb0b60952e4a8789 -> gocryptfs-2.4.0-funtoo-go-bundle-ec772957817fbb0ce5f170cf32cd78d77aade9b5eab92c16ddb66f301f1546c2a0e25e35f6506d58de0e254b7b440dd902eea217760614b4b285de9978a869e9.tar.gz"
+https://distfiles.macaronios.org/99/04/26/990426de0134b89de5f8a3f1c7ebf950c71fe19d4b7ea1d48f930d09fcd4b0e549c4153a7205a2024e455765f8261bb9a8610b5a065ebb68ca074fb5cd8d38a6 -> gocryptfs-2.4.0-funtoo-go-bundle-ec772957817fbb0ce5f170cf32cd78d77aade9b5eab92c16ddb66f301f1546c2a0e25e35f6506d58de0e254b7b440dd902eea217760614b4b285de9978a869e9.tar.gz"
 
 LICENSE="Apache-2.0 BSD BSD-2 MIT"
 

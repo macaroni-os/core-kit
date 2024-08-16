@@ -1,0 +1,14 @@
+BDEPEND=>=dev-lang/go-1.21 >=dev-lang/go-1.12 app-arch/unzip
+DEFINED_PHASES=compile install postinst prepare unpack
+DEPEND=!sys-cluster/kubernetes
+DESCRIPTION=CLI to run commands against Kubernetes clusters
+EAPI=7
+HOMEPAGE=https://kubernetes.io
+IUSE=hardened
+KEYWORDS=*
+LICENSE=Apache-2.0
+RESTRICT=strip test
+SLOT=0
+SRC_URI=https://github.com/kubernetes/kubernetes/tarball/e73bd2e33f000c5a2886771e712d6c90796a4873 -> kubernetes-1.31.0-e73bd2e.tar.gz https://distfiles.macaronios.org/95/b1/19/95b11914ab67a4a799e6006bd1ff3a646ecef324609f134533054f8232ec40e191d62155727582f39e5f5f105e21e1f7ded78c5f6d69cf91a6ae858d3354054c -> kubectl-1.31.0-funtoo-go-bundle-ac558c5ab09681140cc7252ff2c97c2d39994738b6782ce52f0678b2bae459a5ba2bc6a2d4c6d46ae59529c266226b3d05c445dd7c76e559307816ba907d1287.tar.gz
+_eclasses_=bash-completion-r1	47a7402d95930413ce25ba8d857339bb	go-module	cb10a443c46556a15ed035d7a99128e8	multilib	d410501a125f99ffb560b0c523cd3d1e	toolchain-funcs	24921b57d6561d87cbef4916a296ada4	xdg-utils	14d00d009167652b1fa363e55effe213
+_md5_=9afb15d0e795affa345e8906cf416d42

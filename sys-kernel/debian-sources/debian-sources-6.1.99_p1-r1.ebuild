@@ -4,14 +4,19 @@ EAPI=6
 
 inherit check-reqs eutils ego savedconfig
 
-SLOT=funtoo/$PVR
+SLOT=bookworm/$PVR
 
+# NOTE: When updating: use the version from Debiam stable (bookworm):
+# https://packages.debian.org/bookworm/linux-source
 DEB_PATCHLEVEL="1"
-KERNEL_TRIPLET="6.5.10"
+KERNEL_TRIPLET="6.1.99"
+
+
 VERSION_SUFFIX="_p${DEB_PATCHLEVEL}"
 if [ ${PR} != "r0" ]; then
 	VERSION_SUFFIX+="-${PR}"
 fi
+# like "6.1.99_p1-r1-debian-sources"
 EXTRAVERSION="${VERSION_SUFFIX}-${PN}"
 MOD_DIR_NAME="${KERNEL_TRIPLET}${EXTRAVERSION}"
 # Tracking: https://packages.debian.org/sid/linux-image-amd64
@@ -19,31 +24,37 @@ MOD_DIR_NAME="${KERNEL_TRIPLET}${EXTRAVERSION}"
 LINUX_SRCDIR=linux-${PF}
 DEB_PV="${KERNEL_TRIPLET}-${DEB_PATCHLEVEL}"
 
+
 RESTRICT="binchecks strip"
 LICENSE="GPL-2"
-KEYWORDS=""
-IUSE="acpi-ec binary btrfs custom-cflags ec2 +logo luks lvm savedconfig sign-modules zfs"
+KEYWORDS="*"
+IUSE="acpi-ec binary btrfs custom-cflags ec2 genkernel +logo luks lvm mdadm ramdisk savedconfig sshd sign-modules zfs"
 RDEPEND="
 	|| (
 		<sys-apps/gawk-5.2.0
 		>=sys-apps/gawk-5.2.1
 	)
-	binary? ( >=sys-apps/ramdisk-1.1.3 )
+	ramdisk? ( >=sys-apps/ramdisk-1.1.3 )
+	genkernel? ( >=sys-kernel/genkernel-4.3.10-r3 )
 "
 DEPEND="
 	virtual/libelf
 	btrfs? ( sys-fs/btrfs-progs )
 	zfs? ( sys-fs/zfs )
-	luks? ( sys-fs/cryptsetup )"
+	luks? ( sys-fs/cryptsetup )
+	lvm? ( sys-fs/lvm2 )"
 REQUIRED_USE="
-btrfs? ( binary )
-custom-cflags? ( binary )
-logo? ( binary )
-luks? ( binary )
-lvm? ( binary )
-sign-modules? ( binary )
-zfs? ( binary )
+	binary? (
+		^^ ( ramdisk genkernel )
+		btrfs? ( genkernel )
+		mdadm? ( genkernel )
+		luks? ( genkernel )
+		lvm? ( genkernel )
+		sshd? ( genkernel )
+	)
+	ramdisk? ( !genkernel )
 "
+
 DESCRIPTION="Debian Sources (and optional binary kernel)"
 DEB_UPSTREAM="http://http.debian.net/debian/pool/main/l/linux"
 HOMEPAGE="https://packages.debian.org/unstable/kernel/"
@@ -81,15 +92,19 @@ zap_config() {
 	sed -i -e "/$2/d" $1
 }
 
+get_vendor() {
+	vendor_string=$(grep vendor /proc/cpuinfo | uniq | cut -d ':' -f 2)
+	vendor=$([[ ${vendor_string^^} =~ (INTEL)|(AMD) ]] && echo ${BASH_REMATCH[0]})
+	echo $vendor
+}
+
 pkg_pretend() {
 	# Ensure we have enough disk space to compile
 	if use binary ; then
 		CHECKREQS_DISK_BUILD="6G"
 		check-reqs_pkg_setup
+		echo "binary"
 	fi
-	for unsupported in btrfs luks lvm zfs; do
-		use $unsupported && die "Currently, $unsupported is unsupported in our binary kernel/initramfs."
-	done
 }
 
 get_certs_dir() {
@@ -168,6 +183,7 @@ src_prepare() {
 	if use acpi-ec; then
 		# most fan control tools require this
 		tweak_config .config CONFIG_ACPI_EC_DEBUGFS m
+		tweak_config .config CONFIG_DEBUG_FS y
 	fi
 	if use ec2; then
 		setyes_config .config CONFIG_BLK_DEV_NVME
@@ -216,8 +232,15 @@ src_prepare() {
 	fi
 	if use custom-cflags; then
 		MARCH="$(python3 -c "import portage; print(portage.settings[\"CFLAGS\"])" | sed 's/ /\n/g' | grep "march")"
+
 		if [ -n "$MARCH" ]; then
-			CONFIG_MARCH="$(grep -E -m 1 -e "${MARCH}($|[[:space:]])" arch/x86/Makefile | grep -o "CONFIG_[^)]*")"
+			if [[ $MARCH =~ (native) ]] && [[ -n $(get_vendor) ]]; then
+				einfo "Detected -march=native on $(get_vendor)"
+				CONFIG_MARCH=CONFIG_MNATIVE_$(get_vendor)
+			else
+				CONFIG_MARCH="$(grep -m 1 -e "${MARCH}" -B 1 arch/x86/Makefile | sort -r | grep -m 1 -o CONFIG_\[^\)\]* )"
+			fi
+
 			if [ -n "${CONFIG_MARCH}" ]; then
 				einfo "Optimizing kernel for ${CONFIG_MARCH}"
 				tweak_config .config CONFIG_GENERIC_CPU n
@@ -230,10 +253,22 @@ src_prepare() {
 	# build generic CRC32C module into kernel, to defeat FL-11913
 	# (cannot mount ext4 filesystem in initramfs if created with recent e2fsprogs version)
 	tweak_config .config CONFIG_CRYPTO_CRC32C y
+
+	# disable module compression until the initramfs plays nicely with it
+	tweak_config .config CONFIG_MODULE_COMPRESS_XZ n
+	tweak_config .config CONFIG_MODULE_COMPRESS_NONE y
+
 	# get config into good state:
 	yes "" | make oldconfig >/dev/null 2>&1 || die
 	cp .config "${T}"/config || die
 	make -s mrproper || die "make mrproper failed"
+
+	mkdir "${WORKDIR}/genkernel-cache" || die
+	# copy Genkernel cache from host into WORKDIR if it exists
+	if use genkernel && [[ -d /var/cache/genkernel/4.3.10 ]]; then
+		einfo "Using pre-existing genkernel cache at /var/cache/genkernel/4.3.10."
+		cp -r /var/cache/genkernel/4.3.10 "${WORKDIR}/genkernel-cache/" || die
+	fi
 }
 
 src_compile() {
@@ -278,16 +313,42 @@ src_install() {
 	cp "${WORKDIR}/build/System.map" "${D}/usr/src/${LINUX_SRCDIR}/" || die
 	cp "${WORKDIR}/build/Module.symvers" "${D}/usr/src/${LINUX_SRCDIR}/" || die
 	if use sign-modules; then
+		# TODO FIXME: check for compressed modules.
 		find "${D}"/lib/modules -iname *.ko -exec ${WORKDIR}/build/scripts/sign-file sha512 $certs_dir/signing_key.pem $certs_dir/signing_key.x509 {} \; || die
 		# install the sign-file executable for future use.
 		exeinto /usr/src/${LINUX_SRCDIR}/scripts
 		doexe ${WORKDIR}/build/scripts/sign-file
 	fi
-	/usr/bin/ramdisk \
-		--fs_root="${D}" \
-		--temp_root="${T}" \
-		--kernel=${MOD_DIR_NAME} \
-		${D}/boot/initramfs-${KERN_SUFFIX} --debug --backtrace || die "failcakes $?"
+	use ramdisk && ! use genkernel && ( \
+		/usr/bin/ramdisk \
+			--fs_root="${D}" \
+			--temp_root="${T}" \
+			--kernel=${MOD_DIR_NAME} \
+			--keep \
+			 ${D}/boot/initramfs-${KERN_SUFFIX} --debug --backtrace || \
+				die "ramdisk failed: $?" \
+	)
+	! use ramdisk && use genkernel && ( \
+		/usr/bin/genkernel initramfs \
+			--no-mrproper \
+			--no-clean \
+			--no-sandbox \
+			$(use lvm && echo --lvm) \
+			$(use luks && echo --luks) \
+			$(use mdadm && echo --mdadm) \
+			$(use btrfs && echo --btrfs) \
+			$(use sshd && echo --ssh) \
+			--logfile=$WORKDIR/genkernel.log \
+			--kerneldir=${D}/usr/src/${LINUX_SRCDIR}/ \
+			--bootdir=${D}/boot \
+			--cachedir=${WORKDIR}/genkernel-cache \
+			--no-clear-cachedir \
+			--kernel-modules-prefix=${D} \
+			--ramdisk-modules \
+			--initramfs-filename=initramfs-${KERN_SUFFIX} || \
+				die "genkernel failed:  $?" \
+	)
+
 }
 
 pkg_postinst() {
@@ -305,7 +366,18 @@ pkg_postinst() {
 	fi
 
 	if [ -e ${ROOT}lib/modules ]; then
-		depmod -a ${PV}-${PN}
+		depmod -a $MOD_DIR_NAME
+	fi
+
+	# copy the fresh Genkernel cache into the image, but
+	# only if the host doesn't have a cache already existing.
+	# addread /var/cache/genkernel/4.3.10
+	if use genkernel && [[ -d /var/cache/genkernel/4.3.10 ]]; then
+		einfo "Leaving pre-existing genkernel cache at /var/cache/genkernel/4.3.10 alone."
+	else
+		einfo "Copying genkernel cache into /var/cache/genkernel/."
+		mkdir -p /var/cache/genkernel
+		cp -r "${WORKDIR}/genkernel-cache/4.3.10" /var/cache/genkernel/ || die
 	fi
 
 	ego_pkg_postinst

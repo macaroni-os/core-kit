@@ -1,0 +1,13 @@
+BDEPEND=virtual/pkgconfig >=virtual/rust-1.75 app-text/asciidoc sys-devel/clang sys-fs/lvm2 >=virtual/rust-1.37.0
+DEFINED_PHASES=compile configure install setup test unpack
+DEPEND=io-uring? ( !!<=sys-block/thin-provisioning-tools-1.0.14 ) sys-fs/lvm2 !!sys-devel/llvm:0
+DESCRIPTION=A suite of tools for thin provisioning on Linux
+EAPI=7
+HOMEPAGE=https://github.com/jthornber/thin-provisioning-tools
+IUSE=io-uring debug
+KEYWORDS=*
+LICENSE=GPL-3
+SLOT=0
+SRC_URI=https://github.com/jthornber/thin-provisioning-tools/tarball/b745ab35057bdd0a4f1406938916621dcf2b7ef6 -> thin-provisioning-tools-1.1.0-b745ab3.tar.gz https://distfiles.macaronios.org/47/07/21/470721425772d48c350ac3be65962e312defa0ef4daf834729075d258493799270dadcf576c331e70ea14496d0120986b2cc99e509f8fdee3a597603d1671186 -> thin-provisioning-tools-1.1.0-funtoo-crates-bundle-e6bcd5eebd467dfbc838a2d66983434bdfc5c475a529c26b830ec5058fe8c87140d969fc3a1e9f1cb09f13ab09e55e4db2a2aa3f05a8bdd08b6cf875096e1835.tar.gz
+_eclasses_=cargo	a3e90d3e6ca8541d967cff212149cffc	llvm	cecd9f7cf6cb249ceb94806cfe29d334	multilib	d410501a125f99ffb560b0c523cd3d1e	multiprocessing	cac3169468f893670dac3e7cb940e045	toolchain-funcs	24921b57d6561d87cbef4916a296ada4
+_md5_=129888803f4fd582a5bc3c5be262441b

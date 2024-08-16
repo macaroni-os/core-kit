@@ -8,5 +8,5 @@ RDEPEND=>sys-boot/raspberrypi-firmware-1.20190709
 RESTRICT=binchecks strip
 SLOT=0
 SRC_URI=https://github.com/raspberrypi/firmware/archive/1.20221104.tar.gz -> raspberrypi-firmware-1.20221104.tar.gz
-_eclasses_=mount-boot	6aaf58c4a4a0f44626a2bf5483de6e7e
+_eclasses_=mount-boot	1eab0be44c16c0714fb89079df921667
 _md5_=add7ad2230ee018216bd3d7ca5284da4

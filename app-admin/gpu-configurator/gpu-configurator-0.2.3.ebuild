@@ -4,7 +4,7 @@ EAPI=7
 
 DESCRIPTION="Macaroni OS GPU Configurator"
 HOMEPAGE="https://github.com/macaroni-os/gpu-configurator"
-SRC_URI="https://github.com/macaroni-os/gpu-configurator/tarball/eb09b9b5042318abec2d21d68f8b2b91aa001c2c -> gpu-configurator-0.2.1-eb09b9b.tar.gz"
+SRC_URI="https://github.com/macaroni-os/gpu-configurator/tarball/af1848e7fd9f0fa2faab3cf3a8d27ac69145fb89 -> gpu-configurator-0.2.3-af1848e.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -23,7 +23,7 @@ post_src_unpack() {
 src_compile() {
 	golang_ldflags=(
 		"-X \"github.com/macaroni-os/gpu-configurator/pkg/converter.BuildTime=$(date -u '+%Y-%m-%d %I:%M:%S %Z')\""
-		"-X github.com/macaroni-os/gpu-configurator/pkg/converter.BuildCommit=eb09b9b5042318abec2d21d68f8b2b91aa001c2c"
+		"-X github.com/macaroni-os/gpu-configurator/pkg/converter.BuildCommit=af1848e7fd9f0fa2faab3cf3a8d27ac69145fb89"
 	)
 
 	CGO_ENABLED=0 go build \

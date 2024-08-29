@@ -14,14 +14,14 @@ EGO_SUM=(
 	"github.com/gdamore/encoding v1.0.0/go.mod"
 	"github.com/gdamore/tcell/v2 v2.7.4"
 	"github.com/gdamore/tcell/v2 v2.7.4/go.mod"
+	"github.com/junegunn/go-shellwords v0.0.0-20240813092932-a62c48c52e97"
+	"github.com/junegunn/go-shellwords v0.0.0-20240813092932-a62c48c52e97/go.mod"
 	"github.com/lucasb-eyer/go-colorful v1.2.0"
 	"github.com/lucasb-eyer/go-colorful v1.2.0/go.mod"
 	"github.com/mattn/go-isatty v0.0.20"
 	"github.com/mattn/go-isatty v0.0.20/go.mod"
 	"github.com/mattn/go-runewidth v0.0.15"
 	"github.com/mattn/go-runewidth v0.0.15/go.mod"
-	"github.com/mattn/go-shellwords v1.0.12"
-	"github.com/mattn/go-shellwords v1.0.12/go.mod"
 	"github.com/rivo/uniseg v0.2.0/go.mod"
 	"github.com/rivo/uniseg v0.4.3/go.mod"
 	"github.com/rivo/uniseg v0.4.7"
@@ -46,14 +46,14 @@ EGO_SUM=(
 	"golang.org/x/sys v0.5.0/go.mod"
 	"golang.org/x/sys v0.6.0/go.mod"
 	"golang.org/x/sys v0.17.0/go.mod"
-	"golang.org/x/sys v0.22.0"
-	"golang.org/x/sys v0.22.0/go.mod"
+	"golang.org/x/sys v0.24.0"
+	"golang.org/x/sys v0.24.0/go.mod"
 	"golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod"
 	"golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod"
 	"golang.org/x/term v0.5.0/go.mod"
 	"golang.org/x/term v0.17.0/go.mod"
-	"golang.org/x/term v0.22.0"
-	"golang.org/x/term v0.22.0/go.mod"
+	"golang.org/x/term v0.23.0"
+	"golang.org/x/term v0.23.0/go.mod"
 	"golang.org/x/text v0.3.0/go.mod"
 	"golang.org/x/text v0.3.3/go.mod"
 	"golang.org/x/text v0.3.7/go.mod"
@@ -69,8 +69,8 @@ EGO_SUM=(
 
 go-module_set_globals
 
-SRC_URI="https://github.com/junegunn/fzf/tarball/24df8bab282e570be4905676c24b59e75ad383bc -> fzf-0.54.3-24df8ba.tar.gz
-https://distfiles.macaronios.org/20/66/7d/20667d2d490b3895c5407cbca0ce5edf6775dde8db8873375b660eba98372f3f6c82caa6d8a99c4ac434cc15f49130fdb879f781489b05d2c9db73277a52d464 -> fzf-0.54.3-funtoo-go-bundle-105ff9b38872482c0e34a75ec6522d747c121489763a3fc8de66fe040f046a891bd2f92a2372d3ee694cf98664c286c1782213092fcaf5456dd3e17c60ae34b9.tar.gz"
+SRC_URI="https://github.com/junegunn/fzf/tarball/6d71138ffb3c05ebdf2d5e55987d2e7e3a40b34e -> fzf-0.55.0-6d71138.tar.gz
+https://distfiles.macaronios.org/1e/f4/8d/1ef48da2a827adb1ad5102400c28ed58790934576d84c7adf10ec0c213b931f614e13725d795067596e08242b90d60ed8c7156abadef87f2ae6e9d520060d0a3 -> fzf-0.55.0-funtoo-go-bundle-bc1a92167faf973c2bfb8788e352761a6aa93f1ae89653663c2945a854792a509187e7da4a17ba45eb9b93243f1bb058df68edcb039eec581eab55d477da903d.tar.gz"
 
 LICENSE="MIT BSD-with-disclosure"
 SLOT="0"

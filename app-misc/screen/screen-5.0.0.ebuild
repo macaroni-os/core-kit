@@ -25,8 +25,7 @@ BDEPEND=">=sys-apps/texinfo-7"
 
 PATCHES=(
 	# Don't use utempter even if it is found on the system.
-	"${FILESDIR}"/${PN}-4.3.0-no-utempter.patch
-	"${FILESDIR}"/${PN}-4.6.2-utmp-exit.patch
+	"${FILESDIR}"/${PN}-no-utempter.patch
 )
 
 pkg_setup() {
@@ -38,7 +37,9 @@ src_prepare() {
 
 	# sched.h is a system header and causes problems with some C libraries
 	mv sched.h _sched.h || die
-	sed -i '/include/ s:sched.h:_sched.h:' screen.h || die
+	sed -i '/include/ s:sched\.h:_sched.h:' \
+		screen.h winmsg.c window.h sched.c canvas.h || die
+	sed -i 's@[[:space:]]sched\.h@ _sched.h@' Makefile.in || die
 
 	# Fix manpage
 	sed -i \
@@ -87,7 +88,6 @@ src_configure() {
 
 src_compile() {
 	LC_ALL=POSIX emake comm.h term.h
-	emake osdef.h
 
 	emake -C doc screen.info
 	default
@@ -95,7 +95,7 @@ src_compile() {
 
 src_install() {
 	local DOCS=(
-		README ChangeLog INSTALL TODO NEWS* patchlevel.h
+		README ChangeLog INSTALL TODO NEWS*
 		doc/{FAQ,README.DOTSCREEN,fdpat.ps,window_to_display.ps}
 	)
 

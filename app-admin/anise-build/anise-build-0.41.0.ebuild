@@ -4,7 +4,7 @@ EAPI=7
 
 DESCRIPTION="Macaroni OS Build Package/Repository tool"
 HOMEPAGE="https://github.com/geaaru/luet"
-SRC_URI="https://github.com/geaaru/luet/tarball/c9c8eae0f1611a0a7a2cc24c45488550bb9a7382 -> luet-0.40.2-c9c8eae.tar.gz"
+SRC_URI="https://github.com/geaaru/luet/tarball/2c2a917ec9029a69bb485eb5b3f0bab05e5dd59f -> luet-0.41.0-2c2a917.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -19,7 +19,7 @@ post_src_unpack() {
 src_compile() {
 	anise_ldflags=(
 		"-X \"github.com/geaaru/luet/pkg/config.BuildTime=$(date -u '+%Y-%m-%d %I:%M:%S %Z')\""
-		"-X github.com/geaaru/luet/pkg/config.BuildCommit=c9c8eae0f1611a0a7a2cc24c45488550bb9a7382"
+		"-X github.com/geaaru/luet/pkg/config.BuildCommit=2c2a917ec9029a69bb485eb5b3f0bab05e5dd59f"
 		"-X github.com/geaaru/luet/pkg/config.BuildGoVersion=$(go env GOVERSION)"
 	)
 

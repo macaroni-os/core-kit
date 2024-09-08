@@ -6,5 +6,5 @@ HOMEPAGE=https://github.com/geaaru/luet
 KEYWORDS=*
 LICENSE=GPL-3
 SLOT=0
-SRC_URI=https://github.com/geaaru/luet/tarball/c9c8eae0f1611a0a7a2cc24c45488550bb9a7382 -> luet-0.40.2-c9c8eae.tar.gz
-_md5_=8c53b7083141cd3c982f0fd2f9860599
+SRC_URI=https://github.com/geaaru/luet/tarball/2c2a917ec9029a69bb485eb5b3f0bab05e5dd59f -> luet-0.41.0-2c2a917.tar.gz
+_md5_=7a20aea8786b5aeeb4dab46b4dec72b5

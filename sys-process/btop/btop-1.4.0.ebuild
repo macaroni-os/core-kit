@@ -6,12 +6,12 @@ inherit toolchain-funcs xdg-utils
 
 DESCRIPTION="A monitor of resources"
 HOMEPAGE="https://github.com/aristocratos/btop"
-SRC_URI="https://github.com/aristocratos/btop/tarball/6b357aa514c72c10dc27db3e56f3f0d7dae58321 -> btop-1.3.2-6b357aa.tar.gz"
+SRC_URI="https://github.com/aristocratos/btop/tarball/30bf5a2b400298d7175fb6650ebe261c08c66424 -> btop-1.4.0-30bf5a2.tar.gz"
 
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="*"
-S="${WORKDIR}/aristocratos-btop-6b357aa"
+S="${WORKDIR}/aristocratos-btop-30bf5a2"
 
 src_prepare() {
 	default

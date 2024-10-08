@@ -5,12 +5,12 @@ EAPI=7
 inherit go-module
 
 EGO_SUM=(
-	"github.com/!burnt!sushi/toml v1.3.2"
-	"github.com/!burnt!sushi/toml v1.3.2/go.mod"
+	"github.com/!burnt!sushi/toml v1.4.0"
+	"github.com/!burnt!sushi/toml v1.4.0/go.mod"
 	"github.com/mattn/go-isatty v0.0.20"
 	"github.com/mattn/go-isatty v0.0.20/go.mod"
-	"golang.org/x/mod v0.15.0"
-	"golang.org/x/mod v0.15.0/go.mod"
+	"golang.org/x/mod v0.19.0"
+	"golang.org/x/mod v0.19.0/go.mod"
 	"golang.org/x/sys v0.6.0"
 	"golang.org/x/sys v0.6.0/go.mod"
 )
@@ -19,8 +19,8 @@ go-module_set_globals
 
 DESCRIPTION="Direnv is an environment switcher for the shell"
 HOMEPAGE="https://direnv.net"
-SRC_URI="https://github.com/direnv/direnv/tarball/b2f5e9f205c43670cc948c5ee77a06077a493b2f -> direnv-2.34.0-b2f5e9f.tar.gz
-https://distfiles.macaronios.org/a7/ef/5c/a7ef5cc2b29b58ea2bbdfd3dd4857690e9c314c1b0a70822fc9dca1b67fd0b6055fedb155ed3babf33762afa7f2c3a25b151cc5adc052fb7e9c8998ab2178371 -> direnv-2.34.0-funtoo-go-bundle-5b3e48cfcfb02f14732fa1ccd00e493644b79d8dfe8385002cca1e0d079798a2d75d03e7856518c1f813d45731f390f796db10bbdc457687c443f1efd1553aed.tar.gz"
+SRC_URI="https://github.com/direnv/direnv/tarball/978008aa7c66e5beb3e3c4a7705c3d0ce4f99f1c -> direnv-2.35.0-978008a.tar.gz
+https://distfiles.macaronios.org/8f/29/57/8f295700a39a6871faee35373a930665d58605e3c9988b44b1da394779ad8df893bbe2ad3c727b8896a9887c009e14398d25e911df81387f0dd9c7c33d15de6e -> direnv-2.35.0-funtoo-go-bundle-472c0a10be6464f6a7b2cf2038e0baafb077896cb6c32db15ac4c594776bfc838f976aa907e6f9a8e8f0b5f66ad955a4a42659b8f38ccff925511b01888a1658.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"

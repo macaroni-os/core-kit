@@ -5,10 +5,10 @@ EAPI=7
 DESCRIPTION="Direnv is an environment switcher for the shell"
 HOMEPAGE="https://direnv.net"
 SRC_URI="amd64? (
-  https://github.com/direnv/direnv/releases/download/v2.34.0/direnv.linux-amd64 -> direnv.linux-amd64
+  https://github.com/direnv/direnv/releases/download/v2.35.0/direnv.linux-amd64 -> direnv.linux-amd64
 )
 arm64? (
-  https://github.com/direnv/direnv/releases/download/v2.34.0/direnv.linux-arm64 -> direnv.linux-arm64
+  https://github.com/direnv/direnv/releases/download/v2.35.0/direnv.linux-arm64 -> direnv.linux-arm64
 )
 "
 

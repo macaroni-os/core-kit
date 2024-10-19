@@ -6,8 +6,8 @@ inherit cargo
 
 DESCRIPTION="The minimal, blazing-fast, and infinitely customizable prompt for any shell"
 HOMEPAGE="https://github.com/starship/starship"
-SRC_URI="https://github.com/starship/starship/tarball/f505324dac96a7f39b92ff85477c109d7efe6c5e -> starship-1.20.1-f505324.tar.gz
-https://distfiles.macaronios.org/b9/cb/fb/b9cbfbf2b15cdb5dca2ab8f9db7af7280815c68a7250714a1975f46203e727829c1772e25d473182c78f2c56e9e723222519f72f20a72b73a3c33b8555859292 -> starship-1.20.1-funtoo-crates-bundle-b1cd1bdefca30ce5920a3d988eebb8be834a9ac38ba591026edaebf304bd9b322dc76fa9dfa7c8dca1e75f29f4d0cbd337b3f917fb2c6d0213daea47afac2527.tar.gz"
+SRC_URI="https://github.com/starship/starship/tarball/47ccc3603dc20edf4bb59e56b26d19f78a41e770 -> starship-1.21.1-47ccc36.tar.gz
+https://distfiles.macaronios.org/cc/5f/c8/cc5fc8b31758b78cd2481c628830045d505025843d12c36ee81ca51031a048ac450be763675640644a7b3a933f56549d973dd47ebd8afa3d51d0a281e44c2b42 -> starship-1.21.1-funtoo-crates-bundle-7881ce92f88c42c2a51b28d91f640bf61039c861bed8cdca45ab2877c2d94f9d2ab01b470c678eddf34e1085a41e1eaffc245716483f73ca5be7c3c7b6d60580.tar.gz"
 LICENSE="ISC"
 SLOT="0"
 KEYWORDS="*"

@@ -4,7 +4,7 @@ EAPI=6
 
 inherit check-reqs eutils ego savedconfig
 
-SLOT=sid/6.11.4_p1
+SLOT=trixie/6.11.4_p1
 
 # NOTE: When updating: use the version from Debian testing (trixie)
 # https://packages.debian.org/trixie/linux-source
@@ -25,7 +25,7 @@ DEB_PV="${KERNEL_TRIPLET}-${DEB_PATCHLEVEL}"
 
 RESTRICT="binchecks strip"
 LICENSE="GPL-2"
-KEYWORDS=""
+KEYWORDS="*"
 IUSE="acpi-ec binary btrfs custom-cflags ec2 genkernel +logo luks lvm mdadm ramdisk savedconfig sshd sign-modules zfs"
 RDEPEND="
 	|| (

@@ -8,8 +8,8 @@ DESCRIPTION="A general-purpose command-line fuzzy finder, written in GoLang"
 HOMEPAGE="https://github.com/junegunn/fzf"
 
 EGO_SUM=(
-	"github.com/charlievieth/fastwalk v1.0.8"
-	"github.com/charlievieth/fastwalk v1.0.8/go.mod"
+	"github.com/charlievieth/fastwalk v1.0.9"
+	"github.com/charlievieth/fastwalk v1.0.9/go.mod"
 	"github.com/gdamore/encoding v1.0.0"
 	"github.com/gdamore/encoding v1.0.0/go.mod"
 	"github.com/gdamore/tcell/v2 v2.7.4"
@@ -46,14 +46,14 @@ EGO_SUM=(
 	"golang.org/x/sys v0.5.0/go.mod"
 	"golang.org/x/sys v0.6.0/go.mod"
 	"golang.org/x/sys v0.17.0/go.mod"
-	"golang.org/x/sys v0.24.0"
-	"golang.org/x/sys v0.24.0/go.mod"
+	"golang.org/x/sys v0.26.0"
+	"golang.org/x/sys v0.26.0/go.mod"
 	"golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod"
 	"golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod"
 	"golang.org/x/term v0.5.0/go.mod"
 	"golang.org/x/term v0.17.0/go.mod"
-	"golang.org/x/term v0.23.0"
-	"golang.org/x/term v0.23.0/go.mod"
+	"golang.org/x/term v0.25.0"
+	"golang.org/x/term v0.25.0/go.mod"
 	"golang.org/x/text v0.3.0/go.mod"
 	"golang.org/x/text v0.3.3/go.mod"
 	"golang.org/x/text v0.3.7/go.mod"
@@ -69,8 +69,8 @@ EGO_SUM=(
 
 go-module_set_globals
 
-SRC_URI="https://github.com/junegunn/fzf/tarball/6d71138ffb3c05ebdf2d5e55987d2e7e3a40b34e -> fzf-0.55.0-6d71138.tar.gz
-https://distfiles.macaronios.org/1e/f4/8d/1ef48da2a827adb1ad5102400c28ed58790934576d84c7adf10ec0c213b931f614e13725d795067596e08242b90d60ed8c7156abadef87f2ae6e9d520060d0a3 -> fzf-0.55.0-funtoo-go-bundle-bc1a92167faf973c2bfb8788e352761a6aa93f1ae89653663c2945a854792a509187e7da4a17ba45eb9b93243f1bb058df68edcb039eec581eab55d477da903d.tar.gz"
+SRC_URI="https://github.com/junegunn/fzf/tarball/a66a7bd90948735e5077a657f3d2fad6369a53a3 -> fzf-0.56.0-a66a7bd.tar.gz
+https://distfiles.macaronios.org/62/55/48/62554869857745b69b67dd8afe3455fa3fcf2f57af170fa5d643b695adc7f92c67a2a09aa487f9adf1e47a3fd3937a1be4263f10a9cdd4c46cb33be1cf00f655 -> fzf-0.56.0-funtoo-go-bundle-23fdfe8abb0b569bd08d9de5f076e55cf4516d22b82c1e23980aca4d8c9d2c206de491dfd11896aee6bdc8e4a12fc5b2ff7c658068428d503f7eef77f90695c8.tar.gz"
 
 LICENSE="MIT BSD-with-disclosure"
 SLOT="0"

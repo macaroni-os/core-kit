@@ -6,8 +6,8 @@ inherit cargo bash-completion-r1
 
 DESCRIPTION="A command-line benchmarking tool"
 HOMEPAGE="https://github.com/sharkdp/hyperfine"
-SRC_URI="https://github.com/sharkdp/hyperfine/tarball/24a0d5da1bff11567bbf307315d11cb0e10733ec -> hyperfine-1.18.0-24a0d5d.tar.gz
-https://distfiles.macaronios.org/4a/f7/10/4af7106c6f92b0bff5bb51b66920f6e5139327c2121bb5d6ea217da1c894069896a4da73be7c730146d5ca64d2675b59dc24c0a3f6bd8c1983bd6680c0a216b6 -> hyperfine-1.18.0-funtoo-crates-bundle-eb6e36dbaf69d58e55cde6bb79ee19dc43e8ef7ea7ce53f5b5f8b51e8a12e7c058f724267d20c869d26e2aa9fcc7a6f141a53b9717e226754a8d8330dcfba835.tar.gz"
+SRC_URI="https://github.com/sharkdp/hyperfine/tarball/12fec42098642a19855ead34c8cb1e0be28c8ead -> hyperfine-1.19.0-12fec42.tar.gz
+https://distfiles.macaronios.org/53/37/f1/5337f19bbba833fb616077bad5f60d3d267a8e68e3e33b52a6efe5a0d503d6d4eb5ccc6ae1b9fdb9cf2d40cf71d2663acf23e7d702b68d02ada7e7b637e75d84 -> hyperfine-1.19.0-funtoo-crates-bundle-0c594f191ed7bbe77127dd0205e165920bf88eb79f3f767b436ed54bc5bc362cb5241504a0243a2222103037dc8d92485e361a1b269ba666ac1a41aa57768a39.tar.gz"
 
 LICENSE="Apache-2.0 MIT"
 SLOT="0"

@@ -18,6 +18,7 @@ RDEPEND="
 	>=dev-python/httpx-0.24.0[${PYTHON_USEDEP}]
 	>=dev-python/jinja-3[${PYTHON_USEDEP}]
 	dev-python/packaging[${PYTHON_USEDEP}]
+	dev-python/packaging-legacy[${PYTHON_USEDEP}]
 	dev-python/psutil[${PYTHON_USEDEP}]
 	dev-python/pymongo[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
@@ -30,8 +31,8 @@ IUSE=""
 SLOT="0"
 LICENSE="Apache-2.0"
 KEYWORDS="*"
-SRC_URI="https://github.com/macaroni-os/funtoo-metatools/archive/4d65e4a0890f2a0caa860c5429b58e70eebe9bea.zip -> metatools-1.3.8_pre20240818-4d65e4a.zip"
-S="${WORKDIR}/funtoo-metatools-4d65e4a0890f2a0caa860c5429b58e70eebe9bea"
+SRC_URI="https://github.com/macaroni-os/funtoo-metatools/archive/a329987c75e8d11789c804c67070f563360eb07e.zip -> metatools-1.3.8_pre20241117-a329987.zip"
+S="${WORKDIR}/funtoo-metatools-a329987c75e8d11789c804c67070f563360eb07e"
 
 
 src_configure() {

@@ -31,8 +31,8 @@ IUSE=""
 SLOT="0"
 LICENSE="Apache-2.0"
 KEYWORDS="*"
-SRC_URI="https://github.com/macaroni-os/funtoo-metatools/archive/a329987c75e8d11789c804c67070f563360eb07e.zip -> metatools-1.3.8_pre20241117-a329987.zip"
-S="${WORKDIR}/funtoo-metatools-a329987c75e8d11789c804c67070f563360eb07e"
+SRC_URI="https://github.com/macaroni-os/funtoo-metatools/archive/3ca77d7dac6b9256e161d0bce47c7f7eb85e6e96.zip -> metatools-1.3.8_pre20241118-3ca77d7.zip"
+S="${WORKDIR}/funtoo-metatools-3ca77d7dac6b9256e161d0bce47c7f7eb85e6e96"
 
 
 src_configure() {

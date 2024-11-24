@@ -4,12 +4,12 @@ EAPI=6
 
 inherit check-reqs eutils ego savedconfig
 
-SLOT=trixie/6.11.7_p1
+SLOT=sid/6.11.10_p1
 
 # NOTE: When updating: use the version from Debian testing (trixie)
 # https://packages.debian.org/trixie/linux-source
 DEB_PATCHLEVEL="1"
-KERNEL_TRIPLET="6.11.7"
+KERNEL_TRIPLET="6.11.10"
 
 VERSION_SUFFIX="_p${DEB_PATCHLEVEL}"
 if [ ${PR} != "r0" ]; then
@@ -25,7 +25,7 @@ DEB_PV="${KERNEL_TRIPLET}-${DEB_PATCHLEVEL}"
 
 RESTRICT="binchecks strip"
 LICENSE="GPL-2"
-KEYWORDS="*"
+KEYWORDS=""
 IUSE="acpi-ec binary btrfs custom-cflags ec2 genkernel +logo luks lvm mdadm ramdisk savedconfig sshd sign-modules zfs"
 RDEPEND="
 	|| (
@@ -57,8 +57,8 @@ DESCRIPTION="Debian Sources (and optional binary kernel)"
 DEB_UPSTREAM="http://http.debian.net/debian/pool/main/l/linux"
 HOMEPAGE="https://packages.debian.org/unstable/kernel/"
 SRC_URI="https://build.funtoo.org/distfiles/debian-sources/debian-sources-6.3.7_p1-rtw89-driver.tar.gz -> debian-sources-6.3.7_p1-rtw89-driver.tar.gz
-https://deb.debian.org/debian/pool/main/l/linux/linux_6.11.7-1.debian.tar.xz -> linux_6.11.7-1.debian.tar.xz
-https://mirrors.edge.kernel.org/pub/linux/kernel/v6.x/linux-6.11.7.tar.xz -> linux-6.11.7.tar.xz"
+https://deb.debian.org/debian/pool/main/l/linux/linux_6.11.10-1.debian.tar.xz -> linux_6.11.10-1.debian.tar.xz
+https://mirrors.edge.kernel.org/pub/linux/kernel/v6.x/linux-6.11.10.tar.xz -> linux-6.11.10.tar.xz"
 S="$WORKDIR/linux-${KERNEL_TRIPLET}"
 
 get_patch_list() {

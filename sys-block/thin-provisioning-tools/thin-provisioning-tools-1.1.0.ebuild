@@ -26,11 +26,11 @@ DEPEND="
 # bindgen needs libclang.so 
 
 BDEPEND="${RDEPEND}
-	  virtual/pkgconfig
+	virtual/pkgconfig
 	>=virtual/rust-1.75
-	  app-text/asciidoc 
-	  sys-devel/clang
-	  sys-fs/lvm2
+	app-text/asciidoc
+	sys-devel/clang
+	sys-fs/lvm2
 "
 
 
@@ -54,6 +54,11 @@ src_unpack() {
 	cargo_src_unpack
 	rm -rf ${S}
 	mv ${WORKDIR}/jthornber-thin-provisioning-tools-* ${S} || die
+
+	# Patch rio library to ignore unused qualifications.
+	# Needed for io-uring use flag.
+	sed -i -e '/unused_qualifications/d' \
+		${WORKDIR}/funtoo-crates-bundle-${PN}/*rio-*/src/lib.rs
 }
 
 src_configure() {
@@ -77,4 +82,4 @@ src_install() {
 	einstalldocs
 }
 
-# vim: syn=ebuild ts=4 noet
+# vim: filetype=ebuild ts=4 noet

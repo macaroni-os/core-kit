@@ -77,6 +77,10 @@ MULTILIB_CHOST_TOOLS=(
 	/usr/bin/curl-config
 )
 
+PATCHES=(
+	"${FILESDIR}/${P}-setopt-http_content_decoding.patch"
+)
+
 post_src_unpack() {
 	if [ ! -e "${S}" ]; then
 		mv "curl-curl-" "${S}" || die

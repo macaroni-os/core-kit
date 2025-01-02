@@ -4,7 +4,7 @@ EAPI=7
 
 DESCRIPTION="Macaroni OS Anise Portage Converter"
 HOMEPAGE="https://github.com/macaroni-os/anise-portage-converter"
-SRC_URI="https://github.com/macaroni-os/anise-portage-converter/tarball/1385a7911eb465ca17b4578d05ad03fbeb89e7ad -> anise-portage-converter-0.16.2-1385a79.tar.gz"
+SRC_URI="https://github.com/macaroni-os/anise-portage-converter/tarball/84c731d98bf6a0d322404972b24333f661c851be -> anise-portage-converter-0.16.3-84c731d.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -19,7 +19,7 @@ post_src_unpack() {
 src_compile() {
 	anise_ldflags=(
 		"-X \"github.com/macaroni-os/anise-portage-converter/pkg/converter.BuildTime=$(date -u '+%Y-%m-%d %I:%M:%S %Z')\""
-		"-X github.com/macaroni-os/anise-portage-converter/pkg/converter.BuildCommit=1385a7911eb465ca17b4578d05ad03fbeb89e7ad"
+		"-X github.com/macaroni-os/anise-portage-converter/pkg/converter.BuildCommit=84c731d98bf6a0d322404972b24333f661c851be"
 	)
 
 	CGO_ENABLED=0 go build \

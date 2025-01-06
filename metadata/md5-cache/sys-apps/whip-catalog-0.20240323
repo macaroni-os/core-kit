@@ -10,4 +10,4 @@ RDEPEND=app-admin/whip
 RESTRICT=network-sandbox
 SLOT=0
 _eclasses_=git-r3	7dcb8a92f5a091f13e82494fa317ca4b
-_md5_=f7600c77bebb061874141e3dbac85e46
+_md5_=7df1c2d798d622e6052567df394b65fb

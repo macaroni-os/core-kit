@@ -6,13 +6,7 @@ zfs_and_friends:
       user: openzfs
       repo: zfs
       query: releases
-      match: zfs-(2\.2\.[0-9].*)
-#      include:
-#        - prerelease
-#      transform:
-#        - kind: string
-#          match: '-rc'
-#          replace: '_rc'
+      match: zfs-([0-9]\.[0-9]\.[0.9])
   packages:
     - zfs
     - zfs-kmod

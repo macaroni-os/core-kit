@@ -8,7 +8,7 @@ DESCRIPTION="Linux ZFS kernel module for sys-fs/zfs"
 HOMEPAGE="https://github.com/openzfs/zfs"
 
 MY_PV="${PV/_rc/-rc}"
-SRC_URI="{{artifacts[0].src_uri}}"
+SRC_URI="{{src_uri}}"
 KEYWORDS="*"
 ZFS_KERNEL_COMPAT="{{kernel_compat}}"
 
@@ -79,7 +79,7 @@ src_prepare() {
 	default
 
 	# Set module revision number
-	sed -i "s/\(Release:\)\(.*\)1/\1\2${PR}-funtoo/" META || die "Could not set Funtoo release"
+	sed -i "s/\(Release:\)\(.*\)1/\1\2${PR}-macaronios/" META || die "Could not set MacaroniOS release"
 }
 
 src_configure() {

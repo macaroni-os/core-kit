@@ -15,8 +15,8 @@ EGO_SUM=(
 	"github.com/gdamore/tcell/v2 v2.8.1"
 	"github.com/gdamore/tcell/v2 v2.8.1/go.mod"
 	"github.com/google/go-cmp v0.6.0/go.mod"
-	"github.com/junegunn/go-shellwords v0.0.0-20240813092932-a62c48c52e97"
-	"github.com/junegunn/go-shellwords v0.0.0-20240813092932-a62c48c52e97/go.mod"
+	"github.com/junegunn/go-shellwords v0.0.0-20250127100254-2aa3b3277741"
+	"github.com/junegunn/go-shellwords v0.0.0-20250127100254-2aa3b3277741/go.mod"
 	"github.com/lucasb-eyer/go-colorful v1.2.0"
 	"github.com/lucasb-eyer/go-colorful v1.2.0/go.mod"
 	"github.com/mattn/go-isatty v0.0.20"
@@ -97,8 +97,8 @@ EGO_SUM=(
 
 go-module_set_globals
 
-SRC_URI="https://github.com/junegunn/fzf/tarball/668f52a2961748cdcb992556a053e1041f0d5f99 -> fzf-0.58.0-668f52a.tar.gz
-https://distfiles.macaronios.org/df/2a/27/df2a2744af48e2a5e90d33623cdc6471cd40d4cb4ae513a94baf4c9133b6ff569e623ddd17424186c0f70c13daa3ddf369edd28908623b598085f7fadb22b97f -> fzf-0.58.0-funtoo-go-bundle-97af2e154ad51ca9846c2949c3293e28911806783c1c655445eed0bd9ff68cab7d04a0afbd7fe4ea92244423c60f5f944a091199750e92593d84c1cb1e24129d.tar.gz"
+SRC_URI="https://github.com/junegunn/fzf/tarball/a9a1c5f38b5ef50f26f0edc53e0005c87a502c05 -> fzf-0.59.0-a9a1c5f.tar.gz
+https://distfiles.macaronios.org/72/94/3a/72943affdae64548222245e9e1d5b44f8eb7a13d3d541c5f6a700c5113a224fbc1c8f50f178ab3b54c58148653b5e557b0c9df85006a291ebfee5032bdb7601f -> fzf-0.59.0-funtoo-go-bundle-22d8f44c7fb255f458c413d003b5d17858ab37e9258d76f739883a4e31e9baf6606552c66370c894dc316bf54035ba1b1b10ff1163c219f32409f540a003f2ce.tar.gz"
 
 LICENSE="MIT BSD-with-disclosure"
 SLOT="0"

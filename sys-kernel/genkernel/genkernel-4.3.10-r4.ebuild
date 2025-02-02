@@ -47,7 +47,7 @@ VERSION_KEYUTILS="1.6.3"
 
 SRC_URI="https://github.com/gentoo/genkernel/tarball/d6a77d90fd511b04b12bd7ae40d710d3d144c077 -> genkernel-4.3.10-d6a77d9.tar.gz
 https://github.com/g2p/bcache-tools/archive/399021549984ad27bf4a13ae85e458833fe003d7.tar.gz -> bcache-tools-1.0.8_p20141204.tar.gz
-https://boostorg.jfrog.io/artifactory/main/release/1.79.0/source/boost_1_79_0.tar.bz2 -> boost_1_79_0.tar.bz2
+https://archives.boost.io/release/1.79.0/source/boost_1_79_0.tar.bz2 -> boost_1_79_0.tar.bz2
 https://www.kernel.org/pub/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v6.3.2.tar.xz -> btrfs-progs-v6.3.2.tar.xz
 https://www.busybox.net/downloads/busybox-1.37.0.tar.bz2 -> busybox-1.37.0.tar.bz2
 https://ftpmirror.gnu.org/coreutils/coreutils-9.4.tar.xz -> coreutils-9.4.tar.xz

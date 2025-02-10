@@ -8,7 +8,7 @@ inherit autotools cron flag-o-matic pam user
 
 DESCRIPTION="A command scheduler with extended capabilities over cron and anacron"
 HOMEPAGE="http://fcron.free.fr/"
-SRC_URI="https://github.com/yo8192/fcron/tarball/fe4e177b70f255ceadd73c320895db4de2c489bc -> fcron-3.3.2-fe4e177.tar.gz"
+SRC_URI="https://github.com/yo8192/fcron/tarball/ba7b1f8cd799c378d055a473545a028a083021c6 -> fcron-3.3.3-ba7b1f8.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -36,7 +36,7 @@ PATCHES=(
 	"${FILESDIR}"/"${PN}-3.1.1-noreadline.patch"
 )
 
-S="${WORKDIR}/yo8192-fcron-fe4e177"
+S="${WORKDIR}/yo8192-fcron-ba7b1f8"
 
 pkg_setup() {
 	enewgroup fcron

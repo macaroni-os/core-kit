@@ -5,10 +5,10 @@ EAPI=7
 inherit go-module
 
 EGO_SUM=(
+	"al.essio.dev/pkg/shellescape v1.5.1"
+	"al.essio.dev/pkg/shellescape v1.5.1/go.mod"
 	"github.com/!burnt!sushi/toml v1.4.0"
 	"github.com/!burnt!sushi/toml v1.4.0/go.mod"
-	"github.com/alessio/shellescape v1.4.2"
-	"github.com/alessio/shellescape v1.4.2/go.mod"
 	"github.com/cpuguy83/go-md2man/v2 v2.0.3/go.mod"
 	"github.com/creack/pty v1.1.9/go.mod"
 	"github.com/evanphx/json-patch/v5 v5.6.0"
@@ -17,6 +17,8 @@ EGO_SUM=(
 	"github.com/google/go-cmp v0.5.9/go.mod"
 	"github.com/google/safetext v0.0.0-20220905092116-b49f7bc46da2"
 	"github.com/google/safetext v0.0.0-20220905092116-b49f7bc46da2/go.mod"
+	"github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510"
+	"github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510/go.mod"
 	"github.com/inconshreveable/mousetrap v1.1.0"
 	"github.com/inconshreveable/mousetrap v1.1.0/go.mod"
 	"github.com/jessevdk/go-flags v1.4.0/go.mod"
@@ -51,8 +53,8 @@ EGO_SUM=(
 
 go-module_set_globals
 
-SRC_URI="https://github.com/kubernetes-sigs/kind/tarball/c5f516c8b2c4927232074381c980467e393cf965 -> kind-0.26.0-c5f516c.tar.gz
-https://distfiles.macaronios.org/23/e6/9b/23e69b798dd4999540d4950cf63966af411f1a26ae2202e104d6a99b8b29e5cb29443c523137bddfe3d5cf1da5fa566360b80647780be4251dee3b5d3b6c987d -> kind-0.26.0-funtoo-go-bundle-99d54cd9f7de05043cc00a8178ca63e19f73411a652d7e3a9fd3f9a1bb2220dece333e3bf2f99ab611f6fd627f6f8254d1335e1f472c9020d040802107edff00.tar.gz"
+SRC_URI="https://github.com/kubernetes-sigs/kind/tarball/6cb934219ac54aa0ddb1d8313adc05304421ccb6 -> kind-0.27.0-6cb9342.tar.gz
+https://distfiles.macaronios.org/4f/6b/8a/4f6b8a73cbe56ba8e9b474c02208f932714156661a4584710c62950c0bc2fc6e8d0fa7da4d396a20f8122696c97e7292ad1a6905ce29e1ee176ebfd3387ff40e -> kind-0.27.0-funtoo-go-bundle-e67e0e5bacf1087b6626b08c1a5066a895fcd17c3491d64050f9ef412952173aa360b0944a35fb1bfb17f7ebb81bbc63f374c84b7b2a9bfd0fa8a6eeedf69ffa.tar.gz"
 
 DESCRIPTION="Tool for running local Kubernetes clusters using Docker container nodes"
 HOMEPAGE="https://kind.sigs.k8s.io/ https://github.com/kubernetes-sigs/kind"

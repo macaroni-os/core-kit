@@ -8,11 +8,10 @@ inherit autotools toolchain-funcs libtool flag-o-matic bash-completion-r1 usr-ld
 	pam python-r1 multiprocessing
 
 DESCRIPTION="Various useful Linux utilities"
-HOMEPAGE="https://www.kernel.org/pub/linux/utils/util-linux/ https://github.com/karelzak/util-linux"
-SRC_URI="https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.40/util-linux-2.40.4.tar.xz -> util-linux-2.40.4.tar.xz
-"
-
+HOMEPAGE="https://www.kernel.org/pub/linux/utils/util-linux/"
+SRC_URI="https://github.com/util-linux/util-linux/tarball/dbcc687f6ab1568982cdf3fe391c0beb818b7e28 -> util-linux-2.40.4-dbcc687.tar.gz"
 LICENSE="GPL-2 GPL-3 LGPL-2.1 BSD-4 MIT public-domain"
+
 SLOT="0"
 KEYWORDS="*"
 IUSE="audit build +caps +cramfs cryptsetup fdformat hardlink kill +logger magic ncurses nls pam python +readline rtas selinux slang static-libs su +suid tty-helpers udev unicode"

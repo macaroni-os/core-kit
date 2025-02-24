@@ -12,6 +12,8 @@ HOMEPAGE="https://www.kernel.org/pub/linux/utils/util-linux/"
 SRC_URI="https://github.com/util-linux/util-linux/tarball/dbcc687f6ab1568982cdf3fe391c0beb818b7e28 -> util-linux-2.40.4-dbcc687.tar.gz"
 LICENSE="GPL-2 GPL-3 LGPL-2.1 BSD-4 MIT public-domain"
 
+S="${WORKDIR}/util-linux-util-linux-dbcc687"
+
 SLOT="0"
 KEYWORDS="*"
 IUSE="audit build +caps +cramfs cryptsetup fdformat hardlink kill +logger magic ncurses nls pam python +readline rtas selinux slang static-libs su +suid tty-helpers udev unicode"
@@ -69,8 +71,8 @@ pkg_pretend() {
 
 src_prepare() {
 	default
-
-	elibtoolize
+	./autogen.sh || die
+	eautoreconf
 }
 
 python_configure() {

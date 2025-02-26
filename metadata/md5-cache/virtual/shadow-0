@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for user account management utilities
+EAPI=7
+KEYWORDS=*
+RDEPEND=!prefix? ( >=sys-apps/shadow-4.1 )
+SLOT=0
+_md5_=f4a5f4f817d4b997544e3bcc9f5d6550

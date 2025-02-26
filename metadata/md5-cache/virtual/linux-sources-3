@@ -1,0 +1,8 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for Linux kernel sources
+EAPI=7
+IUSE=firmware
+KEYWORDS=*
+RDEPEND=firmware? ( sys-kernel/linux-firmware ) || ( sys-kernel/dummy-sources sys-kernel/debian-sources sys-kernel/debian-sources-lts sys-kernel/gentoo-sources sys-kernel/ck-sources sys-kernel/vanilla-sources )
+SLOT=0
+_md5_=7d59fc811c6ee06f4c7c0842f59f8dca

@@ -1,0 +1,13 @@
+BDEPEND=>=dev-lang/go-1.12 app-arch/unzip
+DEFINED_PHASES=install postinst prepare unpack
+DEPEND=dev-lang/go
+DESCRIPTION=Direnv is an environment switcher for the shell
+EAPI=7
+HOMEPAGE=https://direnv.net
+KEYWORDS=*
+LICENSE=MIT
+RESTRICT=test
+SLOT=0
+SRC_URI=https://github.com/direnv/direnv/tarball/978008aa7c66e5beb3e3c4a7705c3d0ce4f99f1c -> direnv-2.35.0-978008a.tar.gz https://distfiles.macaronios.org/8f/29/57/8f295700a39a6871faee35373a930665d58605e3c9988b44b1da394779ad8df893bbe2ad3c727b8896a9887c009e14398d25e911df81387f0dd9c7c33d15de6e -> direnv-2.35.0-funtoo-go-bundle-472c0a10be6464f6a7b2cf2038e0baafb077896cb6c32db15ac4c594776bfc838f976aa907e6f9a8e8f0b5f66ad955a4a42659b8f38ccff925511b01888a1658.tar.gz
+_eclasses_=go-module	cb10a443c46556a15ed035d7a99128e8	xdg-utils	14d00d009167652b1fa363e55effe213
+_md5_=b67d9ffec815196a3199c86c63ec1586

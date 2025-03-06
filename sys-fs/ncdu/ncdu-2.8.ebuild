@@ -4,7 +4,7 @@ EAPI="7"
 
 DESCRIPTION="NCurses Disk Usage"
 HOMEPAGE="https://dev.yorhel.nl/ncdu/"
-SRC_URI="https://dev.yorhel.nl/download/ncdu-2.7.tar.gz -> ncdu-2.7.tar.gz"
+SRC_URI="https://dev.yorhel.nl/download/ncdu-2.8.tar.gz -> ncdu-2.8.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"

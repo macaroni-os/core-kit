@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for PAM (Pluggable Authentication Modules)
+EAPI=7
+KEYWORDS=*
+RDEPEND=sys-libs/pam
+SLOT=0
+_md5_=631c3d123f764f644d22f0d484b7c277

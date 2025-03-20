@@ -11,6 +11,6 @@ RDEPEND=udev? ( >=virtual/libudev-208:=[-mgorny(-)] )
 REQUIRED_USE=static-libs? ( !udev )
 RESTRICT=!test? ( test )
 SLOT=1
-SRC_URI=https://github.com/libusb/libusb/tarball/d52e355daa09f17ce64819122cb067b8a2ee0d4b -> libusb-1.0.27-d52e355.tar.gz
+SRC_URI=https://github.com/libusb/libusb/tarball/a61afe5f75d969c4561a1d0ad753aa23cee6329a -> libusb-1.0.28-a61afe5.tar.gz
 _eclasses_=autotools	e9ade2787b2f54643c7cdffbfa1cca9c	libtool	f143db5a74ccd9ca28c1234deffede96	multibuild	b2c915190b051f55a23b9354b9849847	multilib	d410501a125f99ffb560b0c523cd3d1e	multilib-build	dbed54cab0d2fac962c6342aeae40ef9	multilib-minimal	8bddda43703ba94d8341f4e247f97566	toolchain-funcs	24921b57d6561d87cbef4916a296ada4	usr-ldscript	4ccde96ab6c8f52f7b2591eca379b866
-_md5_=47f466c61cf4a258018b79578b80b62a
+_md5_=685a800c32f07f3c35f9da6ece9eb9d6

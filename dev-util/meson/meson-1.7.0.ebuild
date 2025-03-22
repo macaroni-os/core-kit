@@ -6,19 +6,16 @@ DISTUTILS_USE_SETUPTOOLS="rdepend"
 
 inherit bash-completion-r1 distutils-r1 toolchain-funcs
 
+DESCRIPTION=""
+HOMEPAGE="https://mesonbuild.com/"
 SRC_URI="https://github.com/mesonbuild/meson/tarball/897b6fcdf9adfa87fe60f420e1b483f0f49af7a3 -> meson-1.7.0-897b6fc.tar.gz"
+LICENSE="Apache-2.0"
+
 KEYWORDS="*"
 
-DESCRIPTION="Open source build system"
-HOMEPAGE="https://mesonbuild.com/"
-
-LICENSE="Apache-2.0"
 SLOT="0"
 
-src_unpack() {
-	unpack ${A}
-	mv "${WORKDIR}"/mesonbuild-* "${S}"
-}
+S="${WORKDIR}/mesonbuild-meson-897b6fc"
 
 python_install_all() {
 	distutils-r1_python_install_all

@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for libelf.so.0 provider dev-libs/libelf
+EAPI=7
+KEYWORDS=*
+RDEPEND=>=dev-libs/libelf
+SLOT=0/0
+_md5_=83210d0b523a293a57f51b58bd9d7441

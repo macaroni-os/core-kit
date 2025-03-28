@@ -1,0 +1,10 @@
+DEFINED_PHASES=install unpack
+DEPEND=!<net-dialup/ppp-2.4.7-r1
+DESCRIPTION=Common set of scripts for various PPP implementations
+EAPI=7
+HOMEPAGE=https://github.com/macaroni-os/kit-fixups
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=!<net-dialup/ppp-2.4.7-r1
+SLOT=0
+_md5_=151de513e9c8c6c77ed37d6ec194b9f6

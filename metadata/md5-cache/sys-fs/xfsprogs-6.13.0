@@ -1,0 +1,14 @@
+BDEPEND=virtual/pkgconfig
+DEFINED_PHASES=configure install prepare
+DEPEND=>=sys-apps/util-linux-2.17.2 icu? ( dev-libs/icu:= ) libedit? ( dev-libs/libedit ) dev-libs/inih dev-libs/userspace-rcu !<sys-fs/xfsdump-3 nls? ( sys-devel/gettext )
+DESCRIPTION=xfs filesystem utilities
+EAPI=7
+HOMEPAGE=https://xfs.wiki.kernel.org/
+IUSE=icu libedit nls static-libs +split-usr
+KEYWORDS=*
+LICENSE=LGPL-2.1
+RDEPEND=>=sys-apps/util-linux-2.17.2 icu? ( dev-libs/icu:= ) libedit? ( dev-libs/libedit ) dev-libs/inih dev-libs/userspace-rcu !<sys-fs/xfsdump-3
+SLOT=0
+SRC_URI=https://www.kernel.org/pub/linux/utils/fs/xfs/xfsprogs/xfsprogs-6.13.0.tar.xz -> xfsprogs-6.13.0.tar.xz
+_eclasses_=multilib	d410501a125f99ffb560b0c523cd3d1e	systemd	71fd8d2065d102753fb9e4d20eaf3e9f	toolchain-funcs	24921b57d6561d87cbef4916a296ada4	usr-ldscript	4ccde96ab6c8f52f7b2591eca379b866
+_md5_=4adeef86bfb7d74f146ac8d26b66320b

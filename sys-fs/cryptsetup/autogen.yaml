@@ -1,0 +1,9 @@
+cryptsetup_gen:
+  packages:
+    - cryptsetup:
+        github:
+          user: mbroz
+          query: tags
+        subslot: True
+        revision:
+          2.6.1: 1

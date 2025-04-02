@@ -1,0 +1,13 @@
+BDEPEND=virtual/rust >=virtual/rust-1.37.0
+DEFINED_PHASES=compile configure install test unpack
+DESCRIPTION=Fuzzy Finder in rust!
+EAPI=7
+HOMEPAGE=https://github.com/skim-rs/skim
+IUSE=tmux vim debug
+KEYWORDS=*
+LICENSE=Apache-2.0 MIT MPL-2.0 Unlicense
+RDEPEND=tmux? ( app-misc/tmux ) vim? ( || ( app-editors/vim app-editors/gvim ) )
+SLOT=0
+SRC_URI=https://github.com/skim-rs/skim/tarball/81799d1f6546210b26b5ebf06d1fd41c21a8f8c1 -> skim-0.16.1-81799d1.tar.gz https://distfiles.macaronios.org/d6/99/f9/d699f99ae0469e6f0a2a82866fe44ececff3dc25ca1118b3add98ab4c93c9c98ceaaf30d2d6cbb336c6729aa8029024db7553a14bd981ff1874f5d5d6bb3ca59 -> skim-0.16.1-funtoo-crates-bundle-7d4c0051afada407048f13c448e2215ff53010dcacdcd91d1a8f6e7dc43ef1e155cd16ecf651a95cea8cf60395474abbc66cddc112b5299c5a5d3ef688314ef5.tar.gz
+_eclasses_=cargo	a3e90d3e6ca8541d967cff212149cffc	multilib	d410501a125f99ffb560b0c523cd3d1e	multiprocessing	cac3169468f893670dac3e7cb940e045	toolchain-funcs	24921b57d6561d87cbef4916a296ada4
+_md5_=f504cdb5ac511997ba8c33a89e9feaeb

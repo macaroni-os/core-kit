@@ -6,7 +6,7 @@ PYTHON_COMPAT=( python3+ )
 
 inherit python-single-r1
 
-DESCRIPTION="Python3 compatible fork of dstat"
+DESCRIPTION="Linux CLI tool providing real-time system resource monitoring"
 HOMEPAGE="https://github.com/scottchiefbaker/dool"
 SRC_URI="https://github.com/scottchiefbaker/dool/tarball/5068abef0a960c173a91e84a45e7fea1b0a802c0 -> dool-1.3.4-5068abe.tar.gz"
 

@@ -1,0 +1,87 @@
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=7
+
+inherit go-module
+
+DESCRIPTION="Encrypted overlay filesystem written in Go"
+HOMEPAGE="https://nuetzlich.net/gocryptfs https://github.com/rfjakob/gocryptfs/releases"
+
+SRC_URI="https://github.com/rfjakob/gocryptfs/tarball/40951d18e31ae192622484f382b8c4d3d0d7f08b -> gocryptfs-2.5.3-40951d1.tar.gz
+https://distfiles.macaronios.org/d7/60/03/d760031f4436a7e4823ec610c6a2da8601500c380a8f681837cd91139b1ff61a2863ce0d3734daeb1ef9a44411de6b2392dc17e8b1fe3827770279be0be87b70 -> gocryptfs-2.5.3-funtoo-go-bundle-ace23f881fae278258731879c7738a2d4efc8b17ab873d47d6ee616d8577276bca4be076d7931d566d51f8cdcac2cff82735318adca774938bdcb3f530f9c940.tar.gz"
+
+LICENSE="Apache-2.0 BSD BSD-2 MIT"
+
+SLOT="0"
+KEYWORDS="*"
+IUSE="debug +man pie +ssl"
+
+BDEPEND="man? ( dev-go/go-md2man )"
+RDEPEND="
+	sys-fs/fuse
+	ssl? ( dev-libs/openssl:0= )
+"
+
+S="${WORKDIR}/rfjakob-gocryptfs-40951d1"
+
+# We omit debug symbols which looks like pre-stripping to portage.
+QA_PRESTRIPPED="
+	/usr/bin/gocryptfs-atomicrename
+	/usr/bin/gocryptfs-findholes
+	/usr/bin/gocryptfs-statfs
+	/usr/bin/gocryptfs-xray
+	/usr/bin/gocryptfs
+"
+
+src_compile() {
+	export GOPATH="${G}"
+	export CGO_CFLAGS="${CFLAGS}"
+	export CGO_LDFLAGS="${LDFLAGS}"
+
+	local myldflags=(
+		"$(usex !debug '-s -w' '')"
+		-X "main.GitVersion=v${PV}"
+		-X "'main.GitVersionFuse=[vendored]'"
+		-X "main.BuildDate=$(date -u '+%Y-%m-%d')"
+	)
+
+	local mygoargs=(
+		-v -work -x
+		"-buildmode=$(usex pie pie exe)"
+		"-asmflags=all=-trimpath=${S}"
+		"-gcflags=all=-trimpath=${S}"
+		-ldflags "${myldflags[*]}"
+		-tags "$(usex !ssl 'without_openssl' 'none')"
+	)
+
+	go build "${mygoargs[@]}" || die
+
+	# loop over all helper tools
+	for dir in gocryptfs-xray contrib/statfs contrib/findholes contrib/atomicrename; do
+		cd "${S}/${dir}" || die
+		go build "${mygoargs[@]}" || die
+	done
+
+	cd "${S}"
+
+	if use man; then
+		go-md2man -in Documentation/MANPAGE.md -out gocryptfs.1 || die
+		go-md2man -in Documentation/MANPAGE-STATFS.md -out gocryptfs-statfs.2 || die
+		go-md2man -in Documentation/MANPAGE-XRAY.md -out gocryptfs-xray.1 || die
+	fi
+}
+
+src_install() {
+	dobin gocryptfs
+	dobin gocryptfs-xray/gocryptfs-xray
+
+	newbin contrib/statfs/statfs "${PN}-statfs"
+	newbin contrib/findholes/findholes "${PN}-findholes"
+	newbin contrib/atomicrename/atomicrename "${PN}-atomicrename"
+
+	if use man; then
+		doman gocryptfs.1
+		doman gocryptfs-xray.1
+		doman gocryptfs-statfs.2
+	fi
+}

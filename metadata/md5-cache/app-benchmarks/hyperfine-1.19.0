@@ -1,0 +1,13 @@
+BDEPEND=virtual/rust >=virtual/rust-1.37.0
+DEFINED_PHASES=compile configure install postinst test unpack
+DESCRIPTION=A command-line benchmarking tool
+EAPI=7
+HOMEPAGE=https://github.com/sharkdp/hyperfine
+IUSE=+bash-completion zsh-completion fish-completion debug
+KEYWORDS=*
+LICENSE=Apache-2.0 MIT
+RDEPEND=bash-completion? ( app-shells/bash-completion ) zsh-completion? ( app-shells/zsh-completions ) fish-completion? ( app-shells/fish )
+SLOT=0
+SRC_URI=https://github.com/sharkdp/hyperfine/tarball/12fec42098642a19855ead34c8cb1e0be28c8ead -> hyperfine-1.19.0-12fec42.tar.gz https://distfiles.macaronios.org/53/37/f1/5337f19bbba833fb616077bad5f60d3d267a8e68e3e33b52a6efe5a0d503d6d4eb5ccc6ae1b9fdb9cf2d40cf71d2663acf23e7d702b68d02ada7e7b637e75d84 -> hyperfine-1.19.0-funtoo-crates-bundle-0c594f191ed7bbe77127dd0205e165920bf88eb79f3f767b436ed54bc5bc362cb5241504a0243a2222103037dc8d92485e361a1b269ba666ac1a41aa57768a39.tar.gz
+_eclasses_=bash-completion-r1	47a7402d95930413ce25ba8d857339bb	cargo	a3e90d3e6ca8541d967cff212149cffc	multilib	d410501a125f99ffb560b0c523cd3d1e	multiprocessing	cac3169468f893670dac3e7cb940e045	toolchain-funcs	24921b57d6561d87cbef4916a296ada4
+_md5_=6a1f6fd6517226f3387d99642b5c9c0b

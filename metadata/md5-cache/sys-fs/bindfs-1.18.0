@@ -10,6 +10,6 @@ LICENSE=GPL-2
 RDEPEND=>=sys-fs/fuse-3.4:3
 RESTRICT=test
 SLOT=0
-SRC_URI=https://github.com/mpartel/bindfs/tarball/3f5e3cb1fcac5fb8034fa4712764317fab51ebe0 -> bindfs-1.17.7-3f5e3cb.tar.gz
+SRC_URI=https://github.com/mpartel/bindfs/tarball/a276dbe66faaf7af02d967a648f7598589bf5c5b -> bindfs-1.18.0-a276dbe.tar.gz
 _eclasses_=autotools	e9ade2787b2f54643c7cdffbfa1cca9c	libtool	f143db5a74ccd9ca28c1234deffede96	multilib	d410501a125f99ffb560b0c523cd3d1e	toolchain-funcs	24921b57d6561d87cbef4916a296ada4
-_md5_=06390c2cfa354b58b5ac76c5f27ddc30
+_md5_=7813f85e4a228edcd0e71e1ec93d505c

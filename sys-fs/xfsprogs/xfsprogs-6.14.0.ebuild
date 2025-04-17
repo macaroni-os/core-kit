@@ -7,7 +7,7 @@ inherit toolchain-funcs systemd usr-ldscript
 
 DESCRIPTION="xfs filesystem utilities"
 HOMEPAGE="https://xfs.wiki.kernel.org/"
-SRC_URI="https://www.kernel.org/pub/linux/utils/fs/xfs/xfsprogs/xfsprogs-6.13.0.tar.xz -> xfsprogs-6.13.0.tar.xz
+SRC_URI="https://www.kernel.org/pub/linux/utils/fs/xfs/xfsprogs/xfsprogs-6.14.0.tar.xz -> xfsprogs-6.14.0.tar.xz
 "
 LICENSE="LGPL-2.1"
 

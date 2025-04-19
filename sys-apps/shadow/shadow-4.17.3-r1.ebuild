@@ -32,13 +32,8 @@ BDEPEND="
 RDEPEND="${DEPEND}
 	pam? ( >=sys-auth/pambase-20150213 )"
 
-post_src_unpack() {
-	mv shadow-maint-shadow-* "${S}"
-}
-
 src_prepare() {
 	default
-	./autogen.sh
 	elibtoolize
 }
 
@@ -46,6 +41,7 @@ src_configure() {
 	local myeconfargs=(
 		--without-group-name-max-length
 		--without-tcb
+		--without-libbsd
 		--enable-shared=no
 		--enable-static=yes
 		$(use_with acl)

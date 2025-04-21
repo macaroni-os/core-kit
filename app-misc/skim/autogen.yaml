@@ -1,0 +1,10 @@
+skim:
+  generator: github-1
+  packages:
+    - skim:
+        github:
+          user: skim-rs
+          repo: skim
+          query: releases
+        extensions:
+          - rust

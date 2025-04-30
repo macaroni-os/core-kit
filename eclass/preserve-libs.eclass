@@ -25,10 +25,8 @@ preserve_old_lib() {
 	fi
 	[[ -z $1 ]] && die "Usage: preserve_old_lib <library to preserve> [more libraries to preserve]"
 
-	if [ "${PRESERVE_LIB_FORCE}" != "1" ] ; then
-		# let portage worry about it
-		has preserve-libs ${FEATURES} && return 0
-	fi
+	# let portage worry about it
+	has preserve-libs ${FEATURES} && return 0
 
 	has "${EAPI:-0}" 0 1 2 && local ED=${D} EROOT=${ROOT}
 

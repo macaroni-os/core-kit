@@ -10,6 +10,6 @@ LICENSE=ZLIB
 RDEPEND=app-arch/bzip2 app-arch/xz-utils sys-libs/zlib-ng virtual/libiconv compat? ( !sys-libs/zlib[minizip] ) openssl? ( dev-libs/openssl:= ) zstd? ( app-arch/zstd:= )
 RESTRICT=!test? ( test )
 SLOT=0
-SRC_URI=https://github.com/zlib-ng/minizip-ng/tarball/95ba7abdd24a956bde584db54d1d55e37d511e2f -> minizip-ng-4.0.9-95ba7ab.tar.gz
+SRC_URI=https://github.com/zlib-ng/minizip-ng/tarball/f3ed731e27a97e30dffe076ed5e0537daae5c1bd -> minizip-ng-4.0.10-f3ed731.tar.gz
 _eclasses_=cmake	ac7cb516f6a288b6a82bc0649ce49878	eutils	6e6c2737b59a4b982de6fb3ecefd87f8	flag-o-matic	d0939f99dd528dd0c5ec25284877bf5c	multilib	d410501a125f99ffb560b0c523cd3d1e	multiprocessing	cac3169468f893670dac3e7cb940e045	ninja-utils	e7575bc4a90349d76e72777013b2bbc2	toolchain-funcs	24921b57d6561d87cbef4916a296ada4	xdg-utils	14d00d009167652b1fa363e55effe213
-_md5_=b12a50cab21df5e009237ee40b15ee6b
+_md5_=6bd829031a9aa3a605545308b6aae1c6

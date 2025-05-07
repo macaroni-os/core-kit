@@ -4,7 +4,7 @@ EAPI=6
 
 inherit check-reqs eutils ego savedconfig
 
-SLOT=sid/6.12.25_p1
+SLOT=trixie/6.12.25_p1
 
 # NOTE: When updating: use the version from Debian testing (trixie)
 # https://packages.debian.org/trixie/linux-source
@@ -25,7 +25,7 @@ DEB_PV="${KERNEL_TRIPLET}-${DEB_PATCHLEVEL}"
 
 RESTRICT="binchecks strip"
 LICENSE="GPL-2"
-KEYWORDS=""
+KEYWORDS="*"
 IUSE="acpi-ec binary btrfs custom-cflags ec2 genkernel +logo luks lvm mdadm ramdisk savedconfig sshd sign-modules zfs"
 RDEPEND="
 	|| (
@@ -150,7 +150,7 @@ src_prepare() {
 	cp -aR "${WORKDIR}"/debian "${S}"/debian
 	epatch "${FILESDIR}"/latest/ikconfig.patch || die
 	epatch "${FILESDIR}"/latest/mcelog.patch || die
-	epatch "${FILESDIR}"/6.8+/more-uarches-for-kernel-6.8-rc4+.patch || die
+	epatch "${FILESDIR}"/6.1.79+/more-ISA-levels-and-uarches-for-kernel-6.1.79+.patch || die
 	# revert recent changes to the rtw89 driver that cause problems for Wi-Fi:
 	rm -rf "${S}"/drivers/net/wireless/rtw89 || die
 	tar xzf "${DISTDIR}"/debian-sources-6.3.7_p1-rtw89-driver.tar.gz -C "${S}"/drivers/net/wireless/ || die

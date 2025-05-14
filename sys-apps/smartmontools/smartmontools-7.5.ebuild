@@ -7,13 +7,13 @@ inherit flag-o-matic
 
 DESCRIPTION="Tools to monitor storage systems to provide advanced warning of disk degradation"
 HOMEPAGE="https://www.smartmontools.org"
-SRC_URI="https://github.com/smartmontools/smartmontools/tarball/0c0bada5eedb759c9d7bb50ff54959cf0809c5a9 -> smartmontools-7.4-0c0bada.tar.gz"
+SRC_URI="https://github.com/smartmontools/smartmontools/tarball/f276b249fdc84019403491303479485030ac7c80 -> smartmontools-7.5-f276b24.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
 IUSE="caps +daemon selinux static +update-drivedb"
 KEYWORDS="*"
-S="${WORKDIR}/smartmontools-smartmontools-0c0bada/${PN}/"
+S="${WORKDIR}/smartmontools-smartmontools-f276b24/${PN}/"
 
 DEPEND="
 	caps? (

@@ -7,7 +7,7 @@ inherit prefix readme.gentoo-r1
 DESCRIPTION="Scripts to support compressed swap devices or ramdisks with zRAM"
 HOMEPAGE="https://github.com/vaeth/zram-init/"
 
-SRC_URI="https://api.github.com/repos/vaeth/zram-init/tarball/v12.2.2 -> zram-init-12.2.2.tar.gz"
+SRC_URI="https://api.github.com/repos/vaeth/zram-init/tarball/v13.0 -> zram-init-13.0.tar.gz"
 KEYWORDS="*"
 
 LICENSE="GPL-2"

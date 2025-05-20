@@ -1,0 +1,9 @@
+DEFINED_PHASES=install postinst preinst prepare unpack
+DESCRIPTION=Filesystem baselayout and init scripts
+EAPI=7
+IUSE=build kernel_FreeBSD kernel_linux +split-usr
+KEYWORDS=*
+LICENSE=GPL-2
+SLOT=0
+_eclasses_=prefix	e51c7882b7b721e54e684f7eb143cbfe
+_md5_=8c79798bba41f87a6b1572f61a24036d

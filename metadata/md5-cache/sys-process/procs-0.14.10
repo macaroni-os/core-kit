@@ -1,0 +1,12 @@
+BDEPEND=virtual/rust >=virtual/rust-1.37.0
+DEFINED_PHASES=compile configure install test unpack
+DESCRIPTION=A modern replacement for ps written in Rust
+EAPI=7
+HOMEPAGE=https://github.com/dalance/procs
+IUSE=debug
+KEYWORDS=*
+LICENSE=Apache-2.0 BSD BSD-2 CC0-1.0 MIT ZLIB
+SLOT=0
+SRC_URI=https://github.com/dalance/procs/tarball/929508694329e0a66cbc220965f1cd57693db82f -> procs-0.14.10-9295086.tar.gz https://distfiles.macaronios.org/a3/74/c3/a374c354c414c467f221d2b818821795a9e3b3e65cb3689e4451b37fbe1b1af1ce2709324efcf697eeec297e7025adcea1582f7a50e92cdd59dd0033a21a5819 -> procs-0.14.10-funtoo-crates-bundle-746f014d4e7657caa322df0dbb86124d8b565c27e9574717f53eefb020cdc77e55e127081dfe6e66138d19adcb79d41a77081d89e3fc34808df3942293d68459.tar.gz
+_eclasses_=cargo	a3e90d3e6ca8541d967cff212149cffc	multilib	d410501a125f99ffb560b0c523cd3d1e	multiprocessing	cac3169468f893670dac3e7cb940e045	toolchain-funcs	24921b57d6561d87cbef4916a296ada4
+_md5_=a3246f387756510c4d15aeee3ffe84ba

@@ -11,6 +11,7 @@ LICENSE="BSD GPL-2 SMAIL"
 SLOT="0"
 KEYWORDS="*"
 IUSE="+installkernel static"
+S="${WORKDIR}/debianutils"
 src_prepare() {
 	# Avoid adding po4a dependency, upstream refreshes manpages.
 	sed -i -e '/SUBDIRS/s|po4a||' Makefile.am || die

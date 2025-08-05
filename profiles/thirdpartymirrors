@@ -40,6 +40,6 @@ vdr-developerorg	http://projects.vdr-developer.org/attachments/download
 vdrfiles	http://gentoo.fh-luh.de/files
 xfce		http://archive.xfce.org
 xorg		https://www.x.org/releases/individual/ https://www.x.org/archive/individual/
-gentoo		https://distfiles.macaronios.org/distfiles https://distfiles-flat.macaronios.org/distfiles https://distfiles-flat.macaronios.org/ http://gentoo.osuosl.org/distfiles http://ftp.halifax.rwth-aachen.de/gentoo/distfiles
-funtoo		https://distfiles.macaronios.org/distfiles https://distfiles-flat.macaronios.org/distfiles https://distfiles-flat.macaronios.org/
-macaroni	https://distfiles.macaronios.org/distfiles https://distfiles-flat.macaronios.org/distfiles https://distfiles-flat.macaronios.org/
+gentoo		https://distfiles.macaronios.org/mark-distfiles/distfiles" https://distfiles.macaronios.org/distfiles https://distfiles-flat.macaronios.org/distfiles https://distfiles-flat.macaronios.org/ http://gentoo.osuosl.org/distfiles http://ftp.halifax.rwth-aachen.de/gentoo/distfiles
+funtoo		https://distfiles.macaronios.org/mark-distfiles/distfiles" https://distfiles.macaronios.org/distfiles https://distfiles-flat.macaronios.org/distfiles https://distfiles-flat.macaronios.org/
+macaroni	https://distfiles.macaronios.org/mark-distfiles/distfiles" https://distfiles.macaronios.org/distfiles https://distfiles-flat.macaronios.org/distfiles https://distfiles-flat.macaronios.org/

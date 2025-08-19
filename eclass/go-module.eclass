@@ -81,6 +81,8 @@ export GOCACHE="${T}/go-build"
 # -mod=vendor use the vendor directory instead of downloading dependencies
 export GOFLAGS="-v -x -mod=readonly"
 
+EGO_BUNDLE_POSTFIX="${EGO_BUNDLE_POSTFIX:-mark-go-bundle}"
+
 # Do not complain about CFLAGS etc since go projects do not use them.
 QA_FLAGS_IGNORED='.*'
 
@@ -276,8 +278,12 @@ go-module_set_globals() {
 #	local go proxy.
 # - Otherwise do a normal unpack.
 go-module_src_unpack() {
-	if [ "${A/${P}-funtoo-go-bundle-/}" != "${A}" ]; then
-		_go-module_src_unpack_funtoo_bundle
+	if [ "${A/${P}-${EGO_BUNDLE_POSTFIX}-/}" != "${A}" ]; then
+		_go-module_src_unpack_mark_bundle
+	# Keep this here until all old packages are been autogen
+	elif [ "${A/${P}-funtoo-go-bundle-/}" != "${A}" ]; then
+		EGO_BUNDLE_POSTFIX=funtoo-go-bundle
+		_go-module_src_unpack_mark_bundle
 	elif [[ "${#EGO_VENDOR[@]}" -gt 0 ]]; then
 		_go-module_src_unpack_vendor
 	elif [[ "${#EGO_SUM[@]}" -gt 0 ]]; then
@@ -287,7 +293,23 @@ go-module_src_unpack() {
 	fi
 }
 
+_go-module_check_gotoolchain() {
+	local gotoolchain_local=$(go env GOVERSION | sed -e 's|go||g')
+	local gotoolchain_pkg=$(cat go.mod | grep "^go " | sed -e 's|go ||g')
+
+	if [ "${gotoolchain_pkg}" == "" ] ; then
+		return
+	fi
+	if [ "${gotoolchain_local}" != "${gotoolchain_pkg}" ] ; then
+		ewarn "Package needs go ${gotoolchain_pkg}. Forcing local version ${gotoolchain_local}."
+		sed -i -e "s|^go.*|go $(go env GOVERSION | sed -e 's|go||g')|g" go.mod
+	fi
+}
+
+
 go-module_src_prepare() {
+	_go-module_check_gotoolchain
+
 	if [ ${#EGO_SUM} != 0 ] || [ ${#GOPROXY} != 0 ]; then
 		_go-module_src_prepare_verify_gosum
 	fi
@@ -303,8 +325,8 @@ go-module_src_prepare() {
 #
 # Exports GOPROXY environment variable so that Go calls will source the
 # directory correctly.
-_go-module_src_unpack_funtoo_bundle() {
-	einfo "Using Funtoo Go Bundle..."
+_go-module_src_unpack_mark_bundle() {
+	einfo "Using Macaroni Go Bundle..."
 
 	local goproxy_dir="${T}/go-proxy"
 	mkdir -p "${goproxy_dir}" || die
@@ -312,7 +334,7 @@ _go-module_src_unpack_funtoo_bundle() {
 	local f
 	local dep
 	local goproxy_mod_dir
-	local go_srcdir="${WORKDIR}"/funtoo-go-bundle-"${PN}"
+	local go_srcdir="${WORKDIR}"/${EGO_BUNDLE_POSTFIX}-"${PN}"
 
 	unpack ${A}
 

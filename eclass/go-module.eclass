@@ -81,7 +81,9 @@ export GOCACHE="${T}/go-build"
 # -mod=vendor use the vendor directory instead of downloading dependencies
 export GOFLAGS="-v -x -mod=readonly"
 
-EGO_BUNDLE_POSTFIX="${EGO_BUNDLE_POSTFIX:-mark-go-bundle}"
+EGO_BUNDLE_POSTFIX="${EGO_BUNDLE_POSTFIX:-mark-go-bundle-}"
+
+EGO_OVERRIDE_GOMOD="${EGO_OVERRIDE_GOMOD:-1}"
 
 # Do not complain about CFLAGS etc since go projects do not use them.
 QA_FLAGS_IGNORED='.*'
@@ -278,7 +280,7 @@ go-module_set_globals() {
 #	local go proxy.
 # - Otherwise do a normal unpack.
 go-module_src_unpack() {
-	if [ "${A/${P}-${EGO_BUNDLE_POSTFIX}-/}" != "${A}" ]; then
+	if [ "${A/${P}-${EGO_BUNDLE_POSTFIX}/}" != "${A}" ]; then
 		_go-module_src_unpack_mark_bundle
 	# Keep this here until all old packages are been autogen
 	elif [ "${A/${P}-funtoo-go-bundle-/}" != "${A}" ]; then
@@ -298,6 +300,9 @@ _go-module_check_gotoolchain() {
 	local gotoolchain_pkg=$(cat go.mod | grep "^go " | sed -e 's|go ||g')
 
 	if [ "${gotoolchain_pkg}" == "" ] ; then
+		return
+	fi
+	if [ "${EGO_OVERRIDE_GOMOD}" == "0" ] ; then
 		return
 	fi
 	if [ "${gotoolchain_local}" != "${gotoolchain_pkg}" ] ; then
@@ -494,15 +499,17 @@ _go-module_src_prepare_verify_gosum() {
 
 	cd "${S}"
 
-	# Cleanup the modules before starting anything else
-	# This will print 'downloading' messages, but it's accessing content from
-	# the $GOPROXY file:/// URL!
-	einfo "Tidying go.mod/go.sum"
-	_go_mod_tidy_output=$(go mod tidy 2>&1 >/dev/null)
-	if [[ $? -ne 0 ]]; then
-		die "Failed to tidy go.mod/go.sum: ${_go_mod_tidy_output}"
+	if [ -z "${EGO_SKIP_TIDY}" ] ; then
+		# Cleanup the modules before starting anything else
+		# This will print 'downloading' messages, but it's accessing content from
+		# the $GOPROXY file:/// URL!
+		einfo "Tidying go.mod/go.sum"
+		_go_mod_tidy_output=$(go mod tidy 2>&1 >/dev/null)
+		if [[ $? -ne 0 ]]; then
+			die "Failed to tidy go.mod/go.sum: ${_go_mod_tidy_output}"
+		fi
+		unset _go_mod_tidy_output
 	fi
-	unset _go_mod_tidy_output
 
 	# This used to call 'go get' to verify by fetching everything from the main
 	# go.mod. However 'go get' also turns out to recursively try to fetch

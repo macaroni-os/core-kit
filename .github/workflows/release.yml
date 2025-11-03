@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   goreleaser:
-    if: startsWith(github.ref, 'refs/tags/')
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       -

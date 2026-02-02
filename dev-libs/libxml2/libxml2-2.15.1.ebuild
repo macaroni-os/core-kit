@@ -26,7 +26,7 @@ DEPEND="${RDEPEND}
 	${PYTHON_DEPS}
 	
 "
-PDEPEND="python? ( dev-python/libxml2-python )
+PDEPEND="python? ( >=dev-python/libxml2-python-2.15.1 )
 	
 "
 S="${WORKDIR}/libxml2-2.15.1"

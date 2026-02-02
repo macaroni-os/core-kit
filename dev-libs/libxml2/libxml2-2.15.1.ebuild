@@ -10,7 +10,7 @@ HOMEPAGE="https://gitlab.gnome.org/GNOME/libxml2/-/wikis/home"
 SRC_URI="https://download.gnome.org/sources/libxml2/2.15/libxml2-2.15.1.tar.xz -> libxml2-2.15.1.tar.xz"
 SLOT="2"
 KEYWORDS="*"
-IUSE="doc icu python readline static-libs lzma"
+IUSE="doc icu python readline static-libs +lzma"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 BDEPEND="virtual/pkgconfig
 	

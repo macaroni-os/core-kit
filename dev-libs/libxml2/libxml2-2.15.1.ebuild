@@ -33,6 +33,9 @@ S="${WORKDIR}/libxml2-2.15.1"
 src_prepare() {
 	default
 	sed -e "/^dir_doc/ s/meson.project_name()$/\'${PF}\'/" -i meson.build || die
+	# Permit to compile libxml2 on stage3 without git installed.
+	# Hack git command with echo in order to print an empty string.
+	sed -e 's|git|echo|g' -e 's|describe||g' -i meson.build || die
 }
 src_configure() {
 	local emesonargs=(

@@ -15,7 +15,7 @@ IUSE="debug doc examples static-libs"
 BDEPEND="${PYTHON_DEPS}
 	sys-devel/autoconf-archive
 	virtual/pkgconfig
-	doc? ( app-text/doxygen[dot] )
+	doc? ( app-doc/doxygen[dot] )
 	
 "
 S="${WORKDIR}/icu/source"

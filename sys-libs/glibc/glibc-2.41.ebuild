@@ -1105,7 +1105,7 @@ glibc_do_src_install() {
 	big)
 		ldso_abi_list+=(
 			# arm
-			arm64   /lib/ld-linux-aarch64_be.so.1
+			arm64   /lib64/ld-linux-aarch64_be.so.1
 			# ELFv1 (glibc does not support ELFv2 on BE)
 			ppc64   /lib64/ld64.so.1
 		)

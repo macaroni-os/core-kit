@@ -1097,7 +1097,7 @@ glibc_do_src_install() {
 	little)
 		ldso_abi_list+=(
 			# arm
-			arm64   /lib/ld-linux-aarch64.so.1
+			arm64   /lib64/ld-linux-aarch64.so.1
 			# ELFv2 (glibc does not support ELFv1 on LE)
 			ppc64   /lib64/ld64.so.2
 		)

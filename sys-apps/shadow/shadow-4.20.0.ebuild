@@ -41,6 +41,9 @@ src_prepare() {
 	default
 	./autogen.sh
 	elibtoolize
+	sed -i -e "s|^#include <errno.h>|#include <errno.h>\n#include <inttypes.h>|g" \
+		lib/find_new_sub_uids.c \
+		lib/find_new_sub_gids.c
 }
 
 src_configure() {

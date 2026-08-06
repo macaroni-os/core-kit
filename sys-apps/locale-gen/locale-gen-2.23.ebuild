@@ -10,9 +10,10 @@ LICENSE="GPL-2.0"
 SLOT="0"
 KEYWORDS="*"
 RDEPEND="app-shells/bash
-	!!<sys-libs/glibc-2.37-r3
+	>=sys-libs/glibc-2.41
 	
 "
+DEPEND="${RDEPEND}"
 
 post_src_unpack() {
 	mv gentoo-locale-gen-* ${S}

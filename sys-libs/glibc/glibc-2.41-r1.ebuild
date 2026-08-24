@@ -3,6 +3,7 @@
 
 EAPI=7
 PYTHON_COMPAT=( python3+)
+TMPFILES_OPTIONAL=1
 inherit flag-o-matic gnuconfig multiprocessing preserve-libs python-any-r1 systemd tmpfiles toolchain-funcs
 
 DESCRIPTION="GNU libc C library"
@@ -20,10 +21,6 @@ RESTRICT="!test? ( test )"
 # Bumping notes: https://wiki.gentoo.org/wiki/Project:Toolchain/sys-libs/glibc
 # Please read & adapt the page as necessary if obsolete.
 
-TMPFILES_OPTIONAL=1
-
-# Gentoo patchset
-PATCH_VER=12
 PATCH_DEV=dilfridge
 
 # gcc mulitilib bootstrap files version
@@ -574,7 +571,7 @@ foreach_abi() {
 
 glibc_banner() {
 	local b="MacaroniOS ${PVR}"
-	[[ -n ${PATCH_VER} ]] && ! use vanilla && b+=" (Gentoo patchset ${PATCH_VER})"
+	! use vanilla && b+=" (Gentoo patchset 12)"
 	echo "${b}"
 }
 
@@ -765,9 +762,8 @@ src_unpack() {
 	einfo "Checking general environment sanity."
 	sanity_prechecks
 	unpack ${P}.tar.xz
-
 	cd "${WORKDIR}" || die
-	unpack glibc-${PV}-patches-${PATCH_VER}.tar.xz
+	unpack glibc-${PV}-patches-12.tar.xz
 
 	cd "${WORKDIR}" || die
 	use systemd && unpack glibc-systemd-${GLIBC_SYSTEMD_VER}.tar.gz
@@ -778,7 +774,7 @@ src_unpack() {
 src_prepare() {
 	local patchsetname
 	if ! use vanilla ; then
-		patchsetname="${PV}-${PATCH_VER}"
+		patchsetname="${PV}-12"
 		einfo "Applying Gentoo Glibc patchset ${patchsetname}"
 		eapply "${WORKDIR}"/patches
 		einfo "Done."
@@ -1101,7 +1097,7 @@ glibc_do_src_install() {
 	little)
 		ldso_abi_list+=(
 			# arm
-			arm64   /lib/ld-linux-aarch64.so.1
+			arm64   /lib64/ld-linux-aarch64.so.1
 			# ELFv2 (glibc does not support ELFv1 on LE)
 			ppc64   /lib64/ld64.so.2
 		)
@@ -1109,7 +1105,7 @@ glibc_do_src_install() {
 	big)
 		ldso_abi_list+=(
 			# arm
-			arm64   /lib/ld-linux-aarch64_be.so.1
+			arm64   /lib64/ld-linux-aarch64_be.so.1
 			# ELFv1 (glibc does not support ELFv2 on BE)
 			ppc64   /lib64/ld64.so.1
 		)

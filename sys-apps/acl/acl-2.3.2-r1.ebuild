@@ -10,6 +10,8 @@ LICENSE="LGPL-2.1"
 SLOT="0"
 KEYWORDS="*"
 IUSE="nls static-libs"
+
+BDEPEND="sys-apps/attr"
 DEPEND="nls? ( sys-devel/gettext )
 	
 "

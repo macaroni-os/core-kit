@@ -174,8 +174,7 @@ src_install() {
 	use static-libs || find "${ED}" -name '*.la' -delete
 
 	# Headers and libraries are owned by sys-libs/binutils-libs.
-	rm -rf "${ED}"/usr/include || die
-	rm -f "${ED}"/usr/lib*/lib{bfd,opcodes,iberty,ctf,sframe}* 2>/dev/null || true
+	rm -f "${ED}"/usr/lib*/lib{bfd,opcodes,iberty,ctf,sframe,gprofng}* 2>/dev/null || true
 
 	cd "${S}"
 	dodoc README

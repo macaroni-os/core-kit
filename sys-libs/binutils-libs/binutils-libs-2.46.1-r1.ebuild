@@ -24,11 +24,8 @@ S="${WORKDIR}/binutils-2.46.1"
 MY_BUILDDIR="${WORKDIR}/build"
 
 src_prepare() {
-	# The Gentoo patchset is vendored under files/ and applied via
-	# PATCHES; no external patch tarball is fetched on bumps.
 	default
 
-	# 9999-Gentoo-We-make-a-release.patch as a plain sed (review ask).
 	sed -i -e 's:^development=true$:development=false:' bfd/development.sh || die
 	# Run misc portage update scripts
 	gnuconfig_update
@@ -151,6 +148,16 @@ src_install() {
 		mkdir -p "${D}/usr/$n"
 		cp -a "$d"/* "${D}/usr/$n"/ 2>/dev/null || true
 	done
+
+	# Some things land in /usr/lib and others in /usr/lib64, which
+	# makes Portage complain and abort. Combine them:
+	if [ -d "${D}"/usr/lib ] && [ -d "${D}"/usr/lib64 ]; then
+		mv "${D}"/usr/lib/* "${D}"/usr/lib64
+		rm -rf "${D}"/usr/lib
+	fi
+	rm -rf "${ED}"/usr/include || die
+
+	use static-libs || find "${ED}" -name '*.la' -delete
 }
 
 

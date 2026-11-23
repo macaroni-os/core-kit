@@ -18,14 +18,14 @@ BDEPEND="doc? ( sys-apps/texinfo )
 	virtual/yacc
 	
 "
-RDEPEND="!<sys-libs/binutils-libs-2.46.1-r1
-	!<sys-devel/binutils-2.46.1-r1
+RDEPEND="!<sys-libs/binutils-libs-2.46.1
+	!<sys-devel/binutils-2.46.1
 	sys-libs/zlib
 	
 "
 DEPEND="${RDEPEND}
 "
-PDEPEND="=sys-libs/binutils-libs-2.46.1-r1
+PDEPEND="=sys-libs/binutils-libs-2.46.1
 "
 S="${WORKDIR}/binutils-2.46.1"
 MY_BUILDDIR="${WORKDIR}/build"
